@@ -4,12 +4,13 @@
 
 from featurerequest import app, db
 from featurerequest.models import User, OAuth
-from flask import flash
+from flask import flash, jsonify, make_response
 from flask_dance.contrib.github import make_github_blueprint, github
 from flask_dance.consumer.backend.sqla import SQLAlchemyBackend
 from flask_dance.consumer import oauth_authorized, oauth_error
 from flask_login import LoginManager, current_user, login_user
 from sqlalchemy.orm.exc import NoResultFound
+from functools import wraps
 
 # Begin setup of the blueprint
 blueprint = make_github_blueprint(
@@ -67,3 +68,19 @@ def github_error(blueprint, error, error_description=None, error_uri=None):
         uri=error_uri,
     )
     flash(msg, category="error")
+
+def get_user_role():
+    if current_user.is_authenticated:
+        return current_user.role
+    return None
+
+# http://flask.pocoo.org/snippets/98/
+def roles(*roles):
+    def wrapper(f):
+        @wraps(f)
+        def wrapped(*args, **kwargs):
+            if get_user_role() not in roles:
+                return make_response(jsonify({'message': 'You do not have access to this page'}), 403)
+            return f(*args, **kwargs)
+        return wrapped
+    return wrapper

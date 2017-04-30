@@ -17,3 +17,4 @@ ma = Marshmallow(app)
 # Import/Setup user authentication and views
 from featurerequest import user_auth
 from featurerequest import views
+from featurerequest import apiviews

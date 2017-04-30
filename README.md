@@ -41,6 +41,7 @@ Now let’s get cracking!
 
 ## Local Testing
 To deploy this locally, you must:
+* Run 'pip install -r requirements.txt'.
 * Add a config.py file next to app.py. This must have the variables SQLALCHEMY_DATABASE_URI, SECRET_KEY, CLIENT_ID, and CLIENT_SECRET set.
 * Run 'python app.py --setup', this will create the database tables as needed.
-* Run 'python app.py', afterwards you should be able to view the website at http://localhost:5000
+* Run 'python app.py', afterwards you should be able to view the website at http://localhost:5000.

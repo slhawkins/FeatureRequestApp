@@ -4,6 +4,7 @@
 """
 
 from featurerequest import app
+from featurerequest.user_auth import roles
 from flask import redirect, url_for, flash, render_template
 from flask_login import login_required, logout_user
 
