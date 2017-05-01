@@ -255,3 +255,4 @@ paket-files/
 config.py
 pylintrc
 *.pyc
+featurerequest/temp.db

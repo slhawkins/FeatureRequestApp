@@ -15,6 +15,7 @@ from datetime import datetime
 from featurerequest import db, ma
 from flask_dance.consumer.backend.sqla import OAuthConsumerMixin
 from flask_login import UserMixin
+from marshmallow import fields
 
 
 class User(db.Model, UserMixin):
@@ -31,16 +32,16 @@ class UserSchema(ma.ModelSchema):
 class OAuth(OAuthConsumerMixin, db.Model):
     """OAuth table, used internally by Flask-Dance for storing OAuth tokens."""
     user_id = db.Column(db.Integer, db.ForeignKey(User.id))
-
     user = db.relationship(User)
 
 
 class Client(db.Model):
     """Client table, allows clients to be added/updated/removed."""
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey(User.id), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey(User.id))
     created = db.Column(db.DateTime, default=datetime.now())
     name = db.Column(db.String(250))
+    poc = db.Column(db.String(250))
     email = db.Column(db.String(250))
     phone = db.Column(db.String(15))
     user = db.relationship(User)
@@ -56,9 +57,10 @@ class Client(db.Model):
 
 
 class ClientSchema(ma.ModelSchema):
+    user = fields.Nested(UserSchema, only='username')
     class Meta:
         model = Client
-
+        include_fk = True
 
 class ClientNote(db.Model):
     """Client note table, users can add notes about a specific client."""
@@ -67,16 +69,18 @@ class ClientNote(db.Model):
     client_id = db.Column(db.Integer, db.ForeignKey(Client.id))
     created = db.Column(db.DateTime, default=datetime.now())
     note = db.Column(db.String(500))
-
     user = db.relationship(User)
     client = db.relationship(Client)
 
 class ClientNoteSchema(ma.ModelSchema):
+    client = fields.Nested(ClientSchema, only='name')
+    user = fields.Nested(UserSchema, only='username')
     class Meta:
         model = ClientNote
+        include_fk = True
 
 
-class ProductArea(db.Model):
+class Product(db.Model):
     """Product area's table, allows for additional product areas to be added
     aside from the default Policies, Billing, Claims, and Reports."""
     id = db.Column(db.Integer, primary_key=True)
@@ -84,12 +88,13 @@ class ProductArea(db.Model):
     created = db.Column(db.DateTime, default=datetime.now())
     name = db.Column(db.String(50))
     description = db.Column(db.String(500))
-
     user = db.relationship(User)
 
-class ProductAreaSchema(ma.ModelSchema):
+class ProductSchema(ma.ModelSchema):
+    user = fields.Nested(UserSchema, only='username')
     class Meta:
-        model = ProductArea
+        model = Product
+        include_fk = True
 
 
 class Feature(db.Model):
@@ -97,21 +102,24 @@ class Feature(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey(User.id))
     client_id = db.Column(db.Integer, db.ForeignKey(Client.id))
-    product_id = db.Column(db.Integer, db.ForeignKey(ProductArea.id))
+    product_id = db.Column(db.Integer, db.ForeignKey(Product.id))
     created = db.Column(db.DateTime, default=datetime.now())
     title = db.Column(db.String(50))
     description = db.Column(db.String(500))
     priority = db.Column(db.SmallInteger)
     target_date = db.Column(db.DateTime)
     ticket_url = db.Column(db.String(2000))
-
     user = db.relationship(User)
     client = db.relationship(Client)
-    project = db.relationship(ProductArea)
+    product_area = db.relationship(Product)
 
 class FeatureSchema(ma.ModelSchema):
+    user = fields.Nested(UserSchema, only='username')
+    client = fields.Nested(ClientSchema, only='name')
+    product_area = fields.Nested(ProductSchema, only='name')
     class Meta:
         model = Feature
+        include_fk = True
 
 
 class FeatureTodo(db.Model):
@@ -123,13 +131,15 @@ class FeatureTodo(db.Model):
     priority = db.Column(db.SmallInteger)
     todo = db.Column(db.String(250))
     completed = db.Column(db.Boolean, default=False)
-
-    feature = db.relationship(Feature)
     user = db.relationship(User)
+    feature = db.relationship(Feature)
 
 class FeatureTodoSchema(ma.ModelSchema):
+    user = fields.Nested(UserSchema, only='username')
+    #feature = fields.Nested(FeatureSchema) # Probably don't need
     class Meta:
         model = FeatureTodo
+        include_fk = True
 
 class FeatureNote(db.Model):
     """Feature note table, allows for thread-like discussion about a feature."""
@@ -138,10 +148,13 @@ class FeatureNote(db.Model):
     feature_id = db.Column(db.Integer, db.ForeignKey(Feature.id))
     created = db.Column(db.DateTime, default=datetime.now())
     note = db.Column(db.String(500))
-
-    feature = db.relationship(Feature)
     user = db.relationship(User)
+    feature = db.relationship(Feature)
+    
 
 class FeatureNoteSchema(ma.ModelSchema):
+    user = fields.Nested(UserSchema, only='username')
+    #feature = fields.Nested(FeatureSchema) # Probably don't need
     class Meta:
         model = FeatureNote
+        include_fk = True

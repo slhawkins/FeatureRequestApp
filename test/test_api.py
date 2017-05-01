@@ -2,7 +2,6 @@
 Basic tests of the RESTful API. More comprehensive tests would include
 checking the values retrieved against the dummy values entered on setup.
 """
-
 import json
 from test import MyTest
 from featurerequest.models import Client
@@ -32,6 +31,10 @@ class UserTest(MyTest):
             response = self.client.get(self.base_url + '/1')
             #print('User:', user, 'Expected Response:', user_response[user], 'Actual Response:', response.status_code)
             assert response.status_code == user_response[user]
+            if user_response[user] == 200:
+                assert response.json['user']['id'] == 1
+                assert response.json['user']['username'] == 'admin'
+                assert response.json['user']['role'] == 'Administrator'
 
     def test_post(self):
         """ 
@@ -75,7 +78,7 @@ class ClientTest(MyTest):
             #print('User:', user, 'Expected Response:', user_response[user], 'Actual Response:', response.status_code)
             assert response.status_code == user_response[user]
             if user_response[user] == 200:
-                assert response.json['name'] == 'Client A'
+                assert response.json['client']['name'] == 'Client A'
 
     def test_post(self):
         """ 
@@ -135,11 +138,11 @@ class ClientNoteTest(MyTest):
             assert response.status_code == user_response[user]
 
 
-class ProductAreaTest(MyTest):
-    base_url = '/productarea'
+class ProductTest(MyTest):
+    base_url = '/product'
     def test_get(self):
         """ 
-        GET: /productarea
+        GET: /product
         User Roles: Employee, Administrator
         """
         # Test getting all users
@@ -163,7 +166,7 @@ class ProductAreaTest(MyTest):
 
     def test_post(self):
         """ 
-        POST: /productarea
+        POST: /product
         User Roles: Administrator
         """
         data = dict(user_id=1, name='Imaging')

@@ -48,6 +48,8 @@ def github_logged_in(blueprint, token):
             # create a user
             user = User(username=username)
             db.session.add(user)
+            if user.id == 1:
+                user.role = 'Administrator'
             db.session.commit()
         login_user(user)
         flash("Successfully signed in with GitHub")

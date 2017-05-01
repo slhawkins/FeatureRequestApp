@@ -1,7 +1,7 @@
 import os, unittest, requests
 from featurerequest import app, db
 from featurerequest import apiviews
-from featurerequest.models import User, Client, ClientNote, ProductArea,\
+from featurerequest.models import User, Client, ClientNote, Product,\
                                   Feature, FeatureTodo, FeatureNote
 from flask import make_response, jsonify
 from flask_testing import TestCase
@@ -52,9 +52,9 @@ class MyTest(TestCase):
             db.session.add(user)
         # Clients
         clients = [
-            Client(name='Client A', email='contact@clienta.com', phone='1234567890', user_id=1),
-            Client(name='Client B', email='contact@clientb.com', phone='1234567890', user_id=1),
-            Client(name='Client C', email='contact@clientc.com', phone='1234567890', user_id=1),
+            Client(name='Client A', poc='Steve', email='steve@clienta.com', phone='1234567890', user_id=1),
+            Client(name='Client B', poc='Nicole', email='nicole@clientb.com', phone='1234567890', user_id=1),
+            Client(name='Client C', poc='Jess', email='jess@clientc.com', phone='1234567890', user_id=1),
             ]
         for client in clients:
             db.session.add(client)
@@ -68,10 +68,10 @@ class MyTest(TestCase):
             db.session.add(note)
         # Product Areas
         products = [
-            ProductArea(user_id=1, name='Policies', description=''),
-            ProductArea(user_id=1, name='Billing', description=''),
-            ProductArea(user_id=1, name='Claims', description=''),
-            ProductArea(user_id=1, name='Reports', description='')
+            Product(user_id=1, name='Policies', description=''),
+            Product(user_id=1, name='Billing', description=''),
+            Product(user_id=1, name='Claims', description=''),
+            Product(user_id=1, name='Reports', description='')
         ]
         for product in products:
             db.session.add(product)

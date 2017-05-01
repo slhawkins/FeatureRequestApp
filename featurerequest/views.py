@@ -6,7 +6,7 @@
 from featurerequest import app
 from featurerequest.user_auth import roles
 from flask import redirect, url_for, flash, render_template
-from flask_login import login_required, logout_user
+from flask_login import login_required, logout_user, current_user
 
 @app.route("/logout")
 @login_required
@@ -19,4 +19,6 @@ def logout():
 @app.route("/")
 def index():
     """Display the home page (soon to be Knockout.js app)"""
+    if current_user.is_authenticated:
+        return render_template("index.html")
     return render_template("home.html")

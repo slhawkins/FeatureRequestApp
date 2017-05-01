@@ -5,13 +5,14 @@ from featurerequest.models import \
     User, UserSchema,\
     Client, ClientSchema,\
     ClientNote, ClientNoteSchema,\
-    ProductArea, ProductAreaSchema,\
+    Product, ProductSchema,\
     Feature, FeatureSchema,\
     FeatureTodo, FeatureTodoSchema,\
     FeatureNote, FeatureNoteSchema
 from flask import jsonify, request, make_response
 from flask_restful import Api, Resource
 from flask_login import current_user, login_user
+from sqlalchemy.orm import contains_eager
 
 api = Api(app)
 
@@ -19,12 +20,13 @@ class UserAPI(Resource):
     @roles('Employee', 'Administrator')
     def get(self, id=None):
         if id is None:
-            results = User.query.all()
-            schema = UserSchema(many=True)
+            users = User.query.all()
+            results = UserSchema(many=True).dump(users)
+            return make_response(jsonify({'users': results.data}), 200)
         else:
-            results = User.query.get(id)
-            schema = UserSchema()
-        return schema.jsonify(results)
+            user = User.query.get(id)
+            result = UserSchema().dump(user)
+            return make_response(jsonify({'user': result.data}), 200)
 
     @roles('Administrator')
     def post(self):
@@ -46,12 +48,13 @@ class ClientAPI(Resource):
     @roles('Employee', 'Administrator')
     def get(self, id=None):
         if id is None:
-            results = Client.query.all()
-            schema = ClientSchema(many=True)
+            clients = Client.query.all()
+            results = ClientSchema(many=True).dump(clients)
+            return make_response(jsonify({'clients': results.data}), 200)
         else:
-            results = Client.query.get(id)
-            schema = ClientSchema()
-        return make_response(schema.jsonify(results), 200)
+            client = Client.query.get(id)
+            result = ClientSchema().dump(client)
+            return make_response(jsonify({'client': result.data}), 200)
 
     @roles('Administrator')
     def post(self):
@@ -73,12 +76,13 @@ class ClientNoteAPI(Resource):
     @roles('Employee', 'Administrator')
     def get(self, id=None):
         if id is None:
-            results = ClientNote.query.all()
-            schema = ClientNoteSchema(many=True)
+            client_notes = ClientNote.query.all()
+            results = ClientNoteSchema(many=True).dump(client_notes)
+            return make_response(jsonify({'client_notes': results.data}), 200)
         else:
-            results = ClientNote.query.get(id)
-            schema = ClientNoteSchema()
-        return make_response(schema.jsonify(results), 200)
+            client_note = ClientNote.query.get(id)
+            result = ClientNoteSchema().dump(client_note)
+            return make_response(jsonify({'client_note': result.data}), 200)
 
     @roles('Employee', 'Administrator')
     def post(self):
@@ -96,20 +100,21 @@ class ClientNoteAPI(Resource):
         return make_response(jsonify({'message': 'Added a client note.', 'clientnote': result.data}), 201)
 
 
-class ProductAreaAPI(Resource):
+class ProductAPI(Resource):
     @roles('Employee', 'Administrator')
     def get(self, id=None):
         if id is None:
-            results = ProductArea.query.all()
-            schema = ProductAreaSchema(many=True)
+            products = Product.query.all()
+            results = ProductSchema(many=True).dump(products)
+            return make_response(jsonify({'products': results.data}), 200)
         else:
-            results = ProductArea.query.get(id)
-            schema = ProductAreaSchema()
-        return make_response(schema.jsonify(results), 200)
+            product = Product.query.get(id)
+            result = ProductSchema().dump(product)
+            return make_response(jsonify({'product': result.data}), 200)
 
     @roles('Administrator')
     def post(self):
-        schema = ProductAreaSchema()
+        schema = ProductSchema()
         json_data = request.get_json()
         if not json_data:
             return jsonify({'message': 'No data provided'}), 400
@@ -119,20 +124,24 @@ class ProductAreaAPI(Resource):
             return jsonify(errors), 422
         db.session.add(data)
         db.session.commit()
-        result = schema.dump(ProductArea.query.get(data.id))
-        return make_response(jsonify({'message': 'Added a product area.', 'productarea': result.data}), 201)
+        result = schema.dump(Product.query.get(data.id))
+        return make_response(jsonify({'message': 'Added a product.', 'product': result.data}), 201)
 
 
 class FeatureAPI(Resource):
     @roles('Employee', 'Administrator')
     def get(self, id=None):
+        """
+        Gets one or more features requests along with associated data.
+        """
         if id is None:
-            results = Feature.query.all()
-            schema = FeatureSchema(many=True)
+            features = Feature.query.all()
+            results = FeatureSchema(many=True).dump(features)
+            return make_response(jsonify({'features': results.data}), 200)
         else:
-            results = Feature.query.get(id)
-            schema = FeatureSchema()
-        return make_response(schema.jsonify(results), 200)
+            feature = Feature.query.get(id)
+            result = FeatureSchema().dump(feature)
+            return make_response(jsonify({'feature': result.data}), 200)
 
     @roles('Employee', 'Administrator')
     def post(self):
@@ -154,12 +163,13 @@ class FeatureTodoAPI(Resource):
     @roles('Employee', 'Administrator')
     def get(self, id=None):
         if id is None:
-            results = FeatureTodo.query.all()
-            schema = FeatureTodoSchema(many=True)
+            feature_todos = FeatureTodo.query.all()
+            results = FeatureTodoSchema(many=True).dump(feature_todos)
+            return make_response(jsonify({'feature_todos': results.data}), 200)
         else:
-            results = FeatureTodo.query.get(id)
-            schema = FeatureTodoSchema()
-        return make_response(schema.jsonify(results), 200)
+            feature_todo = FeatureTodo.query.get(id)
+            result = FeatureTodoSchema().dump(feature_todo)
+            return make_response(jsonify({'feature_todo': result.data}), 200)
 
     @roles('Employee', 'Administrator')
     def post(self):
@@ -174,19 +184,20 @@ class FeatureTodoAPI(Resource):
         db.session.add(data)
         db.session.commit()
         result = schema.dump(FeatureTodo.query.get(data.id))
-        return make_response(jsonify({'message': 'Added a feature to-do.', 'featuretodo': result.data}), 201)
+        return make_response(jsonify({'message': 'Added a feature to-do.', 'feature_todo': result.data}), 201)
 
 
 class FeatureNoteAPI(Resource):
     @roles('Employee', 'Administrator')
     def get(self, id=None):
         if id is None:
-            results = FeatureNote.query.all()
-            schema = FeatureNoteSchema(many=True)
+            feature_notes = FeatureNote.query.all()
+            results = FeatureNoteSchema(many=True).dump(feature_notes)
+            return make_response(jsonify({'feature_notes': results.data}), 200)
         else:
-            results = FeatureNote.query.get(id)
-            schema = FeatureNoteSchema()
-        return make_response(schema.jsonify(results), 200)
+            feature_note = FeatureNote.query.get(id)
+            result = FeatureNoteSchema().dump(feature_note)
+            return make_response(jsonify({'feature_note': result.data}), 200)
 
     @roles('Employee', 'Administrator')
     def post(self):
@@ -201,13 +212,13 @@ class FeatureNoteAPI(Resource):
         db.session.add(data)
         db.session.commit()
         result = schema.dump(FeatureNote.query.get(data.id))
-        return make_response(jsonify({'message': 'Added a feature note.', 'featurenote': result.data}), 201)
+        return make_response(jsonify({'message': 'Added a feature note.', 'feature_note': result.data}), 201)
 
 
 api.add_resource(UserAPI, '/user', '/user/<int:id>', endpoint='user')
 api.add_resource(ClientAPI, '/client', '/client/<int:id>', endpoint='client')
 api.add_resource(ClientNoteAPI, '/clientnote', '/clientnote/<int:id>', endpoint='clientnote')
-api.add_resource(ProductAreaAPI, '/productarea', '/productarea/<int:id>', endpoint='productarea')
+api.add_resource(ProductAPI, '/product', '/product/<int:id>', endpoint='product')
 api.add_resource(FeatureAPI, '/feature', '/feature/<int:id>', endpoint='feature')
 api.add_resource(FeatureTodoAPI, '/featuretodo', '/featuretodo/<int:id>', endpoint='featuretodo')
 api.add_resource(FeatureNoteAPI, '/featurenote', '/featurenote/<int:id>', endpoint='featurenote')
