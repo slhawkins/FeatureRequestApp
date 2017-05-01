@@ -38,7 +38,7 @@ As always, a plan helps to add some sort of direction to the development. This i
 * **Test:** Get some friends to jump on and test it! This will probably happen as I go, but some thorough  tests would be appreciated at this stage. 
 * **Final Submission**
 
-Now let’s get cracking!
+Now letâ€™s get cracking!
 
 ## Local Testing
 To deploy this locally, you must:
@@ -50,5 +50,7 @@ To deploy this locally, you must:
 
 ## Current Status
 Currently I only have generated views for the feature requests, client list, user list, and product area list. The add/edit/delete buttons do not work at the moment.
+
+A current copy of the code can be found at: http://featurerequest.us-west-2.elasticbeanstalk.com/. At the moment, it will automatically log you in as an admin since I don't have SSL setup for proper Github authentication.
 
 ![Current status](http://i.imgur.com/b4PYVVw.png)
