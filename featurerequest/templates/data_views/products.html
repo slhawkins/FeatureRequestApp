@@ -1,0 +1,33 @@
+<table class="table table-hover table-bordered table-sm" data-bind="with: productWatch">
+    <thead>
+        <tr data-bind="foreach: $root.productColumns">
+            <th><span data-bind="text: $root.productColumnMap[$data]"></span></th>
+            <!-- ko if: ($index() == $root.productColumns().length - 1) -->
+            <th style="width:50px">
+                <div class="pull-right">
+                    <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#addProductModal">
+                        <i class="fa fa-plus" aria-hidden="true"></i>
+                    </button>
+                </div>
+            </th>
+            <!-- /ko -->
+        </tr>
+    </thead>
+    <tbody data-bind="foreach: { data: $root.productData().products, as: 'product'}">
+        <tr data-bind="foreach: $root.productColumns">
+            <td data-bind="text: product[$data]"></td>
+            <!-- ko if: ($index() == $root.productColumns().length - 1) -->
+            <td>
+                <div class="btn-group pull-right" role="group">
+                    <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#editProductModal">
+                        <i class="fa fa-pencil" aria-hidden="true"></i>
+                    </button>
+                    <button type="button" class="btn btn-danger btn-sm pull-right" data-toggle="modal" data-target="#deleteProductModal">
+                        <i class="fa fa-trash" aria-hidden="true"></i>
+                    </button>
+                </div>
+            </td>
+            <!-- /ko -->
+        </tr>
+    </tbody>
+</table>

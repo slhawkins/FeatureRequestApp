@@ -26,14 +26,17 @@
                 </ul>
             </div>
             <div class="tab-content card-block">
-                <div role="tabpanel" class="tab-pane active fade show" id="features" aria-labelledby="features-tab" aria-expanded="true">{% include "features.html" %}</div>
-                <div role="tabpanel" class="tab-pane" id="clients" aria-labelledby="clients-tab" aria-expanded="false">{% include "clients.html" %}</div>
-                <div role="tabpanel" class="tab-pane" id="productareas" aria-labelledby="productareas-tab" aria-expanded="false">{% include "products.html" %}</div>
-                <div role="tabpanel" class="tab-pane" id="users" aria-labelledby="users-tab" aria-expanded="false">{% include "users.html" %}</div>
+                <div role="tabpanel" class="tab-pane active fade show" id="features" aria-labelledby="features-tab" aria-expanded="true">{% include "data_views/features.html" %}</div>
+                <div role="tabpanel" class="tab-pane" id="clients" aria-labelledby="clients-tab" aria-expanded="false">{% include "data_views/clients.html" %}</div>
+                <div role="tabpanel" class="tab-pane" id="productareas" aria-labelledby="productareas-tab" aria-expanded="false">{% include "data_views/products.html" %}</div>
+                <div role="tabpanel" class="tab-pane" id="users" aria-labelledby="users-tab" aria-expanded="false">{% include "data_views/users.html" %}</div>
             </div>
         </div>
     </div>
-
+    {% include "modals/feature_modals.html" %}
+    {% include "modals/client_modals.html" %}
+    {% include "modals/product_modals.html" %}
+    {% include "modals/user_modals.html" %}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
