@@ -53,4 +53,10 @@ Currently I only have generated views for the feature requests, client list, use
 
 A current copy of the code can be found at: http://featurerequest.us-west-2.elasticbeanstalk.com/. At the moment, it will automatically log you in as an admin since I don't have SSL setup for proper Github authentication.
 
-![Current status](http://i.imgur.com/b4PYVVw.png)
+![Current status](http://i.imgur.com/G4GzNC9.png)
+
+![Current status](http://i.imgur.com/dYtoVti.png)
+
+![Current status](http://i.imgur.com/8F3xF0T.png)
+
+![Current status](http://i.imgur.com/Z5FMh66.png)
