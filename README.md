@@ -22,12 +22,12 @@ As always, a plan helps to add some sort of direction to the development. This i
   * ~~Database~~
   * ~~RESTful API~~ 
   * ~~Interface~~
-* **RESTful API:** Create tests and implement the RESTful API. **GET and POST methods have been implemented, though they are subject to change.**
-  * Feature Requests
+* **RESTful API:** Create tests and implement the RESTful API. **GET,POST, and a few PUT methods have been implemented, though they are subject to change.**
+  * ~~Feature Requests~~
   * Discussion Threads
   * To-do List
-  * User Management
-  * Client/Project Management
+  * ~~User Management~~
+  * ~~Client/Product Management~~
 * **Knockout.js:**
   * ~~Learn about it!~~ Learning is ongoing, but I've got a good start.
   * Learn how to test Knockout.js applications
