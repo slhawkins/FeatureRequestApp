@@ -107,7 +107,7 @@ class Feature(db.Model):
     title = db.Column(db.String(50))
     description = db.Column(db.String(500))
     priority = db.Column(db.SmallInteger)
-    target_date = db.Column(db.DateTime)
+    target_date = db.Column(db.Date)
     ticket_url = db.Column(db.String(2000))
     user = db.relationship(User)
     client = db.relationship(Client)

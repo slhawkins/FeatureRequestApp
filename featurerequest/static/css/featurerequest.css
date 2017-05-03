@@ -1,0 +1,8 @@
+/* http://stackoverflow.com/questions/17688408/how-to-make-alerts-overlap */
+.alert-overlay {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1;
+}

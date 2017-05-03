@@ -1,0 +1,163 @@
+﻿<div class="modal fade" id="addFeatureModal" tabindex="-1" role="dialog" aria-labelledby="addFeatureModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addFeatureModalLabel">Add Feature Request</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="addFeatureForm">
+                    <div class="form-group row">
+                        <label for="addFeatureTitle" class="col-4 col-form-label">Title</label>
+                        <div class="col-8">
+                            <input class="form-control" type="text" value="" name="title" id="addFeatureTitle" required>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="addFeatureDescription" class="col-4 col-form-label">Description</label>
+                        <div class="col-8">
+                            <input class="form-control" type="text" value="" name="description" id="addFeatureDescription" required>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="addFeatureClient" class="col-4 col-form-label">Client</label>
+                        <div class="col-8">
+                            <select class="form-control" id="addFeatureClient" name="client_id" required
+                                    data-bind="options: clientNamesOrdered,
+                                               optionsText: 'name' ,
+                                               optionsValue: 'id'"></select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="addFeaturePriority" class="col-4 col-form-label">Priority</label>
+                        <div class="col-8">
+                            <input class="form-control" type="number" value="" name="priority" id="addFeaturePriority" required>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="addFeatureDate" class="col-4 col-form-label">Target Date</label>
+                        <div class="col-8 input-group date datepicker" id="addFeatureDate" data-provide="datepicker" data-date-autoclose="true">
+                            <div class="input-group-addon">
+                                <span class="fa fa-calendar-plus-o"></span>
+                            </div>
+                            <input type="text" class="form-control" name="target_date">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="addFeatureURL" class="col-4 col-form-label">Ticket URL</label>
+                        <div class="col-8 date">
+                            <input class="form-control" type="url" value="" name="ticket_url" id="addFeatureURL">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="addFeatureProduct" class="col-4 col-form-label">Product Area</label>
+                        <div class="col-8">
+                            <select class="form-control" id="addFeatureProduct" name="product_id" required 
+                                    data-bind="options: productNamesOrdered,
+                                               optionsText: 'name' ,
+                                               optionsValue: 'id'"></select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="addDataForm('feature', 'title')">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editFeatureModal" tabindex="-1" role="dialog" aria-labelledby="editFeatureModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editFeatureModalLabel">Add Feature Request</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="editFeatureForm">
+                    <input type="hidden" id="editFeatureID" name="id" value="">
+                    <div class="form-group row">
+                        <label for="editFeatureTitle" class="col-4 col-form-label">Title</label>
+                        <div class="col-8">
+                            <input class="form-control" type="text" value="" name="title" id="editFeatureTitle" required>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="editFeatureDescription" class="col-4 col-form-label">Description</label>
+                        <div class="col-8">
+                            <input class="form-control" type="text" value="" name="description" id="editFeatureDescription" required>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="editFeatureClient" class="col-4 col-form-label">Client</label>
+                        <div class="col-8">
+                            <select class="form-control" id="editFeatureClient" name="client_id" disabled>
+                                <option value="" selected></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="editFeaturePriority" class="col-4 col-form-label">Priority</label>
+                        <div class="col-8">
+                            <input class="form-control" type="number" value="" name="priority" id="editFeaturePriority" required>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="editFeatureDate" class="col-4 col-form-label">Target Date</label>
+                        <div class="col-8 input-group date datepicker" id="editFeatureDate" data-provide="datepicker" data-date-autoclose="true">
+                            <div class="input-group-addon">
+                                <span class="fa fa-calendar-plus-o"></span>
+                            </div>
+                            <input type="text" class="form-control" name="target_date">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="editFeatureURL" class="col-4 col-form-label">Ticket URL</label>
+                        <div class="col-8 date">
+                            <input class="form-control" type="url" value="" name="ticket_url" id="editFeatureURL">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="editFeatureProduct" class="col-4 col-form-label">Product Area</label>
+                        <div class="col-8">
+                            <select class="form-control" id="editFeatureProduct" name="product_id" required
+                                    data-bind="options: productNamesOrdered,
+                                               optionsText: 'name' ,
+                                               optionsValue: 'id'"></select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="editDataForm('feature', 'title')">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="deleteFeatureModal" tabindex="-1" role="dialog" aria-labelledby="deleteFeatureModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteFeatureModalLabel">Delete Feature Request</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete ....?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Yes</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -46,10 +46,8 @@ def github_logged_in(blueprint, token):
             user = query.one()
         except NoResultFound:
             # create a user
-            user = User(username=username)
+            user = User(username=username, role='Administrator')
             db.session.add(user)
-            if user.id == 1:
-                user.role = 'Administrator'
             db.session.commit()
         login_user(user)
         flash("Successfully signed in with GitHub")

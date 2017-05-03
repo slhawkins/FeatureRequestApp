@@ -1,0 +1,94 @@
+﻿<div class="modal fade" id="addUserModal" tabindex="-1" role="dialog" aria-labelledby="addUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addUserModalLabel">Add User</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="addUserForm">
+                    <div class="form-group row">
+                        <label for="addUserName" class="col-4 col-form-label">Username</label>
+                        <div class="col-8">
+                            <input class="form-control" type="text" value="" name="username" id="addUserName" required>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="addUserRole" class="col-4 col-form-label">Role</label>
+                        <div class="col-8">
+                            <select class="form-control" id="addUserRole" name="role" required>
+                                <option value="Client">Client</option>
+                                <option value="Employee">Employee</option>
+                                <option value="Administrator">Administrator</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="addDataForm('user', 'username')">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editUserModal" tabindex="-1" role="dialog" aria-labelledby="editUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editUserModalLabel">Add User</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="editUserForm">
+                    <input type="hidden" id="editUserID" name="id" value="">
+                    <div class="form-group row">
+                        <label for="editUserName" class="col-4 col-form-label">Username</label>
+                        <div class="col-8">
+                            <input class="form-control" type="text" value="" name="username" id="editUserName" required>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="editUserRole" class="col-4 col-form-label">Role</label>
+                        <div class="col-8">
+                            <select class="form-control" id="editUserRole" name="role" required>
+                                <option value="Client">Client</option>
+                                <option value="Employee">Employee</option>
+                                <option value="Administrator">Administrator</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="editDataForm('user', 'username')">Add</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="deleteUserModal" tabindex="-1" role="dialog" aria-labelledby="deleteUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteUserModalLabel">Delete User Request</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete ....?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Yes</button>
+            </div>
+        </div>
+    </div>
+</div>

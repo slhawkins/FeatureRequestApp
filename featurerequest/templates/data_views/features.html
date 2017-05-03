@@ -1,33 +1,38 @@
-<table class="table table-hover table-bordered table-sm" data-bind="with: featureWatch">
-    <thead>
-        <tr data-bind="foreach: $root.featureColumns">
-            <th><span data-bind="text: $root.featureColumnMap[$data]"></span></th>
-            <!-- ko if: ($index() == $root.featureColumns().length - 1) -->
-            <th style="width:50px">
-                <div class="pull-right">
-                    <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#addFeatureModal">
-                        <i class="fa fa-plus" aria-hidden="true"></i>
-                    </button>
-                </div>
-            </th>
-            <!-- /ko -->
-        </tr>
-    </thead>
-    <tbody data-bind="foreach: { data: $root.featureData().features, as: 'feature'}">
-        <tr data-bind="foreach: $root.featureColumns">
-            <td data-bind="text: feature[$data]"></td>
-            <!-- ko if: ($index() == $root.featureColumns().length - 1) -->
-            <td>
-                <div class="btn-group pull-right" role="group">
-                    <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#editFeatureModal">
-                        <i class="fa fa-pencil" aria-hidden="true"></i>
-                    </button>
-                    <button type="button" class="btn btn-danger btn-sm pull-right" data-toggle="modal" data-target="#deleteFeatureModal">
-                        <i class="fa fa-trash" aria-hidden="true"></i>
-                    </button>
-                </div>
-            </td>
-            <!-- /ko -->
-        </tr>
-    </tbody>
-</table>
+<!--<div class="col-2">
+    Filters will go here...
+</div>-->
+<div class="col-12">
+    <table class="table table-hover table-bordered table-responsive" style="width: auto !important;" data-bind="with: featureWatch">
+        <thead>
+            <tr data-bind="foreach: $root.featureColumns">
+                <th class="text-nowrap"><a href="#" data-bind="text: $root.featureColumnMap[$data], orderable: {collection: 'featureData', field: $data}"></a><i aria-hidden="true"></i></th>
+                <!-- ko if: ($index() == $root.featureColumns().length - 1) -->
+                <th style="width:50px">
+                    <div class="pull-right">
+                        <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#addFeatureModal">
+                            <i class="fa fa-plus" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                </th>
+                <!-- /ko -->
+            </tr>
+        </thead>
+        <tbody data-bind="foreach: { data: $root.featureData, as: 'feature'}">
+            <tr data-bind="foreach: $root.featureColumns">
+                <td data-bind="text: feature[$data]"></td>
+                <!-- ko if: ($index() == $root.featureColumns().length - 1) -->
+                <td>
+                    <div class="btn-group pull-right" role="group">
+                        <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#editFeatureModal" data-bind="attr: {'data-id': feature['id']}">
+                            <i class="fa fa-pencil" aria-hidden="true"></i>
+                        </button>
+                        <button type="button" class="btn btn-danger btn-sm pull-right" data-toggle="modal" data-target="#deleteFeatureModal" data-bind="attr: {'data-id': feature['id']}">
+                            <i class="fa fa-trash" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                </td>
+                <!-- /ko -->
+            </tr>
+        </tbody>
+    </table>
+</div>

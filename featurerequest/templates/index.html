@@ -6,9 +6,17 @@
     <title>Feature Request App</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/css/bootstrap-multiselect.css" integrity="sha256-O1jJhOIWWDc3wq75g7aXDl7aEQT2XPkieX/Mz/u4hQ0=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.0-RC3/css/bootstrap-datepicker3.min.css" integrity="sha256-x2QakhDNywgLRp4bMOcFtWJDh5aME39fbNVJTWBVbss=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/css/bootstrap-multiselect.css" integrity="sha256-O1jJhOIWWDc3wq75g7aXDl7aEQT2XPkieX/Mz/u4hQ0=" crossorigin="anonymous" />
+    <link href="static/css/featurerequest.css" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
+    <div class="alert-overlay">
+        <div id="successAlert" class="alert alert-success" role="alert" style="display: none;">Success!</div>
+        <div id="failAlert" class="alert alert-danger" role="alert" style="display: none;">Danger!</div>
+    </div>
+    <div class="container-responsive">
         <div role="tabpanel" class="card">
             <div class="card-header">
                 <ul class="nav nav-tabs card-header-tabs" role="tablist">
@@ -26,22 +34,33 @@
                 </ul>
             </div>
             <div class="tab-content card-block">
-                <div role="tabpanel" class="tab-pane active fade show" id="features" aria-labelledby="features-tab" aria-expanded="true">{% include "data_views/features.html" %}</div>
-                <div role="tabpanel" class="tab-pane" id="clients" aria-labelledby="clients-tab" aria-expanded="false">{% include "data_views/clients.html" %}</div>
-                <div role="tabpanel" class="tab-pane" id="productareas" aria-labelledby="productareas-tab" aria-expanded="false">{% include "data_views/products.html" %}</div>
-                <div role="tabpanel" class="tab-pane" id="users" aria-labelledby="users-tab" aria-expanded="false">{% include "data_views/users.html" %}</div>
+                <div role="tabpanel" class="tab-pane active fade show" id="features" aria-labelledby="features-tab" aria-expanded="true"><div class="row">{% include "data_views/features.html" %}</div></div>
+                <div role="tabpanel" class="tab-pane" id="clients" aria-labelledby="clients-tab" aria-expanded="false"><div class="row">{% include "data_views/clients.html" %}</div></div>
+                <div role="tabpanel" class="tab-pane" id="productareas" aria-labelledby="productareas-tab" aria-expanded="false"><div class="row">{% include "data_views/products.html" %}</div></div>
+                <div role="tabpanel" class="tab-pane" id="users" aria-labelledby="users-tab" aria-expanded="false"><div class="row">{% include "data_views/users.html" %}</div></div>
+
             </div>
         </div>
     </div>
-    {% include "modals/feature_modals.html" %}
-    {% include "modals/client_modals.html" %}
-    {% include "modals/product_modals.html" %}
-    {% include "modals/user_modals.html" %}
+    {% include "modals/feature.html" %}
+    {% include "modals/client.html" %}
+    {% include "modals/product.html" %}
+    {% include "modals/user.html" %}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.16.0/jquery.validate.min.js" integrity="sha256-UOSXsAgYN43P/oVrmU+JlHtiDGYWN2iHnJuKY9WD+Jg=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.16.0/additional-methods.min.js" integrity="sha256-ixVUAy0s+/DoWFGN9kYLK0M2viz7HxiN/REIo65Qsug=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.2/knockout-min.js" integrity="sha256-owX7sroiO/O1a7h3a4X29A1g3QgqdNvijRQ7V5TH45M=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout.mapping/2.4.1/knockout.mapping.min.js" integrity="sha256-gaGobNk1cPaj0abcVmyZxUYgCPsueCJwN5i4DjC4BS0=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.min.js" integrity="sha256-1fK87Pt9T7XXn/Vj3CWSfJlZkL5f73092A8YL7p7avc=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.0-RC3/js/bootstrap-datepicker.min.js" integrity="sha256-cxy6ZG28yUYUJuVa4jSB0REugsTXuiaAVAVamfh5wmk=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.min.js" integrity="sha256-1fK87Pt9T7XXn/Vj3CWSfJlZkL5f73092A8YL7p7avc=" crossorigin="anonymous"></script>
+
+    <script src="static/js/knockout.bindings.orderable.js"></script>
+    <script src="static/js/jquery.serialize-object.js"></script>
     <script src="static/js/defaults.js"></script>
+    <script src="static/js/featurerequest.js"></script>
     <script src="static/js/mvvm.js"></script>
 </body>
 </html>

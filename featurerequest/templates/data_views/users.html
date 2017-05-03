@@ -1,7 +1,7 @@
-<table class="table table-hover table-bordered table-sm" data-bind="with: userWatch">
+<table class="table table-hover table-bordered table-responsive" style="width: auto !important;" data-bind="with: userWatch">
     <thead>
         <tr data-bind="foreach: $root.userColumns">
-            <th><span data-bind="text: $root.userColumnMap[$data]"></span></th>
+            <th class="text-nowrap"><a href="#" data-bind="text: $root.userColumnMap[$data], orderable: {collection: 'userData', field: $data}"></a><i aria-hidden="true"></i></th>
             <!-- ko if: ($index() == $root.userColumns().length - 1) -->
             <th style="width:50px">
                 <div class="pull-right">
@@ -13,16 +13,16 @@
             <!-- /ko -->
         </tr>
     </thead>
-    <tbody data-bind="foreach: { data: $root.userData().users, as: 'user'}">
+    <tbody data-bind="foreach: { data: $root.userData, as: 'user'}">
         <tr data-bind="foreach: $root.userColumns">
             <td data-bind="text: user[$data]"></td>
             <!-- ko if: ($index() == $root.userColumns().length - 1) -->
             <td>
                 <div class="btn-group pull-right" role="group">
-                    <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#editUserModal">
+                    <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#editUserModal" data-bind="attr: {'data-id': user['id']}">
                         <i class="fa fa-pencil" aria-hidden="true"></i>
                     </button>
-                    <button type="button" class="btn btn-danger btn-sm pull-right" data-toggle="modal" data-target="#deleteUserModal">
+                    <button type="button" class="btn btn-danger btn-sm pull-right" data-toggle="modal" data-target="#deleteUserModal" data-bind="attr: {'data-id': user['id']}">
                         <i class="fa fa-trash" aria-hidden="true"></i>
                     </button>
                 </div>
