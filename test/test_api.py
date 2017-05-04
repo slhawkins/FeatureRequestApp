@@ -94,50 +94,6 @@ class ClientTest(MyTest):
             response = self.client.post(self.base_url, data=json.dumps(data), content_type='application/json')
             assert response.status_code == user_response[user]
 
-
-class ClientNoteTest(MyTest):
-    base_url = '/clientnote'
-    def test_get(self):
-        """ 
-        GET: /clientnote
-        User Roles: Employee, Administrator
-        """
-        # Test getting all users
-        response = self.client.get(self.base_url)
-        assert response.status_code == 403
-        user_response = dict(client=403, employee=200, admin=200)
-        for user in user_response:
-            self.client.get('/login_test/' + user)
-            response = self.client.get(self.base_url)
-            #print('User:', user, 'Expected Response:', user_response[user], 'Actual Response:', response.status_code)
-            assert response.status_code == user_response[user]
-        response = self.client.get('/logout')
-        # Test for the retrieval of one user
-        response = self.client.get(self.base_url + '/1')
-        assert response.status_code == 403
-        user_response = dict(client=403, employee=200, admin=200)
-        for user in user_response:
-            self.client.get('/login_test/' + user)
-            response = self.client.get(self.base_url + '/1')
-            #print('User:', user, 'Expected Response:', user_response[user], 'Actual Response:', response.status_code)
-            assert response.status_code == user_response[user]
-
-    def test_post(self):
-        """ 
-        POST: /clientnote
-        User Roles: Employee, Administrator
-        """
-        data = dict(user_id=1, client_id=1, note='May be willing to start a new project with us.')
-        response = self.client.post(self.base_url, data=json.dumps(data), content_type='application/json')
-        assert response.status_code == 403
-        user_response = dict(client=403, employee=201, admin=201)
-        for user in user_response:
-            self.client.get('/login_test/' + user)
-            response = self.client.post(self.base_url, data=json.dumps(data), content_type='application/json')
-            #print('User:', user, 'Expected Response:', user_response[user], 'Actual Response:', response.status_code)
-            assert response.status_code == user_response[user]
-
-
 class ProductTest(MyTest):
     base_url = '/product'
     def test_get(self):

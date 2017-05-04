@@ -1,8 +1,8 @@
 import os, unittest, requests
 from featurerequest import app, db
 from featurerequest import apiviews
-from featurerequest.models import User, Client, ClientNote, Product,\
-                                  Feature, FeatureTodo, FeatureNote
+from featurerequest.models import User, Client, Product, Feature,\
+                                  FeatureTodo, FeatureNote
 from flask import make_response, jsonify
 from flask_testing import TestCase
 from flask_login import current_user, login_user, logout_user
@@ -45,8 +45,7 @@ class MyTest(TestCase):
         # Users
         users = [
             User(username='admin', role='Administrator'),
-            User(username='employee', role='Employee'),
-            User(username='client', role='Client')
+            User(username='employee', role='Employee')
         ]
         for user in users:
             db.session.add(user)
@@ -58,14 +57,6 @@ class MyTest(TestCase):
             ]
         for client in clients:
             db.session.add(client)
-        # Client Notes
-        c_notes = [
-            ClientNote(user_id=1, client_id=1, note='May be willing to start a new project with us.'),
-            ClientNote(user_id=1, client_id=2, note='May be willing to start a new project with us.'),
-            ClientNote(user_id=1, client_id=3, note='May be willing to start a new project with us.')
-        ]
-        for note in c_notes:
-            db.session.add(note)
         # Product Areas
         products = [
             Product(user_id=1, name='Policies', description=''),

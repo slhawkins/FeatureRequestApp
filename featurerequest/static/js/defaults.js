@@ -55,12 +55,14 @@ var productColumnsMap = {
     'id': 'ID',
     'name': 'Name',
     'user': 'User',
-    'user_id': 'User ID'
+    'user_id': 'User ID',
+    'active': 'Active'
 };
 
 var productColumnsOrder = [
     'name',
-    'description'
+    'description',
+    'active'
 ];
 
 var userColumnsMap = {

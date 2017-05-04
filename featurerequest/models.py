@@ -2,7 +2,6 @@
    - User
    - OAuth
    - Client
-   - ClientNote
    - ProductArea
    - Feature
    - FeatureTodo
@@ -22,7 +21,8 @@ class User(db.Model, UserMixin):
     """User table, currently only holds the username and role."""
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(250), unique=True, nullable=False)
-    role = db.Column(db.Enum('Client', 'Employee', 'Administrator'), server_default='Client')
+    active = db.Column(db.Boolean, default=True)
+    role = db.Column(db.Enum('Inactive', 'Employee', 'Administrator'))
 
 class UserSchema(ma.ModelSchema):
     class Meta:
@@ -55,28 +55,10 @@ class Client(db.Model):
     def __repr__(self):
         return '<Client {}>'.format(self.name)
 
-
 class ClientSchema(ma.ModelSchema):
     user = fields.Nested(UserSchema, only='username')
     class Meta:
         model = Client
-        include_fk = True
-
-class ClientNote(db.Model):
-    """Client note table, users can add notes about a specific client."""
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey(User.id))
-    client_id = db.Column(db.Integer, db.ForeignKey(Client.id))
-    created = db.Column(db.DateTime, default=datetime.now())
-    note = db.Column(db.String(500))
-    user = db.relationship(User)
-    client = db.relationship(Client)
-
-class ClientNoteSchema(ma.ModelSchema):
-    client = fields.Nested(ClientSchema, only='name')
-    user = fields.Nested(UserSchema, only='username')
-    class Meta:
-        model = ClientNote
         include_fk = True
 
 
@@ -87,6 +69,7 @@ class Product(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey(User.id))
     created = db.Column(db.DateTime, default=datetime.now())
     name = db.Column(db.String(50))
+    active = db.Column(db.Boolean, default=True)
     description = db.Column(db.String(500))
     user = db.relationship(User)
 
@@ -109,6 +92,7 @@ class Feature(db.Model):
     priority = db.Column(db.SmallInteger)
     target_date = db.Column(db.Date)
     ticket_url = db.Column(db.String(2000))
+    is_active = db.Column(db.Boolean, default=True)
     user = db.relationship(User)
     client = db.relationship(Client)
     product_area = db.relationship(Product)
@@ -132,7 +116,7 @@ class FeatureTodo(db.Model):
     todo = db.Column(db.String(250))
     completed = db.Column(db.Boolean, default=False)
     user = db.relationship(User)
-    feature = db.relationship(Feature)
+    feature = db.relationship(Feature, cascade='delete')
 
 class FeatureTodoSchema(ma.ModelSchema):
     user = fields.Nested(UserSchema, only='username')
@@ -149,7 +133,7 @@ class FeatureNote(db.Model):
     created = db.Column(db.DateTime, default=datetime.now())
     note = db.Column(db.String(500))
     user = db.relationship(User)
-    feature = db.relationship(Feature)
+    feature = db.relationship(Feature, cascade='delete')
     
 
 class FeatureNoteSchema(ma.ModelSchema):

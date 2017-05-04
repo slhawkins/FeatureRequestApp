@@ -2,28 +2,23 @@ function FeatureRequestViewModel() {
     var self = this;
     // Setup data observables. They have the following types:
     // _____Watch    : Watch variables are used to update the data table when
-    //                 either its column order or data has changed. Listeners 
-    //                 are placed on both of those observables.
-    //                 I'm not 100% it was needed, but it was a fun exercise.
+    //                 either its column order or data has changed. 
     // _____Data     : Data retrieved from the API
     // _____Columns  : Column order, will be modifiable 
     // _____ColumnMap: Contains a map from the field names retrieved via the API
     //                 to column titles.
-    // Following these, I subscribe to the data and column observables.
     // 
     // Features
     self.featureWatch = ko.observable(1);
     self.featureData = ko.observableArray([]);
     self.featureColumns = ko.observable(featureColumnsOrder);
     self.featureColumnMap = featureColumnsMap;
-    //self.featureData.subscribe(function () { self.featureWatch(1 + self.featureWatch()); });
     self.featureColumns.subscribe(function () { self.featureWatch(1 + self.featureWatch()); });
     // Clients
     self.clientWatch = ko.observable(1);
     self.clientData = ko.observableArray([]);
     self.clientColumns = ko.observable(clientColumnsOrder);
     self.clientColumnMap = clientColumnsMap;
-    self.clientData.subscribe(function () { self.clientWatch(1 + self.clientWatch()); });
     self.clientColumns.subscribe(function () { self.clientWatch(1 + self.clientWatch()); });
     self.clientNamesOrdered = ko.pureComputed(function () {
         // Quick sort
@@ -40,7 +35,6 @@ function FeatureRequestViewModel() {
     self.productData = ko.observableArray([]);
     self.productColumns = ko.observable(productColumnsOrder);
     self.productColumnMap = productColumnsMap;
-    self.productData.subscribe(function () { self.productWatch(1 + self.productWatch()); });
     self.productColumns.subscribe(function () { self.productWatch(1 + self.productWatch()); });
     self.productNamesOrdered = ko.pureComputed(function () {
         // Quick sort
@@ -54,7 +48,6 @@ function FeatureRequestViewModel() {
     self.userData = ko.observableArray([]);
     self.userColumns = ko.observable(userColumnsOrder);
     self.userColumnMap = userColumnsMap;
-    self.userData.subscribe(function () { self.userWatch(1 + self.userWatch()); });
     self.userColumns.subscribe(function () { self.userWatch(1 + self.userWatch()); });
 
     self.getData = function(data_type) {
@@ -63,6 +56,15 @@ function FeatureRequestViewModel() {
                 console.log("Sorry, you do not have permission to access this!");
                 self[data_type + "Data"]([]);
             } else {
+                if (data_type === "product") {
+                    for (var i in data['products']) {
+                        if (data['products'][i]['active'] == true) {
+                            data['products'][i]['active'] = "Yes";
+                        } else {
+                            data['products'][i]['active'] = "No";
+                        }
+                    }
+                }
                 self[data_type + "Data"](data[data_type + "s"]);
             }
         });

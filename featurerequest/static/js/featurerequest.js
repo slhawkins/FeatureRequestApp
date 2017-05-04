@@ -8,16 +8,39 @@ function showAlert(type, text) {
 }
 
 // Modal Validations
+$("#addFeatureForm").validate({
+    rules: {
+        addFeaturePriority: {
+            min: 1
+        }
+    }
+});
+$("#editFeatureForm").validate({
+    rules: {
+        addFeaturePriority: {
+            min: 1
+        }
+    }
+});
 $("#addClientForm").validate({
     rules: {
         addClientPhone: {
-            required: true,
             phoneUS: true
         }
     }
 });
-$("#addFeatureForm").validate();
+$("#editClientForm").validate({
+    rules: {
+        addClientPhone: {
+            phoneUS: true
+        }
+    }
+});
 
+$("#addProductForm").validate();
+$("#editProductForm").validate();
+$("#addUserForm").validate();
+$("#editUserForm").validate();
 
 
 // Sends a POST to the server with the form data.
@@ -78,6 +101,37 @@ function editDataForm(data_type, show_value) {
             }
         });
     }
+}
+
+// Sends a DELETE to the server with the id of the item to be deleted.
+//     data_type: 'feature', 'client', 'product', or 'user'
+//     show_value: Value from the response that is displayed in the success message.
+function deleteDataForm(data_type, show_value) {
+    var type_upper = data_type.charAt(0).toUpperCase() + data_type.slice(1);
+    var sendData = $.ajax({
+        url: data_type + '/' + $("#delete" + type_upper + "ID").val(),
+        method: "DELETE",
+        dataType: "json"
+    });
+    $("#delete" + type_upper + "Modal").modal('hide');
+    sendData.done(function (msg) {
+        if (data_type === "client" || data_type === "feature") {
+            showAlert("success", "Deleted " + msg[data_type][show_value] + ".");
+        } else {
+            showAlert("success", "Deactivated " + msg[data_type][show_value] + ".");
+        }
+        featureRequestViewModel.updateData(data_type);
+        if (data_type === "client") {
+            featureRequestViewModel.updateData("feature");
+        }
+    });
+    sendData.fail(function (response, textStatus) {
+        if (response === "undefined") {
+            showAlert("fail", "Unknown server-side error occured. :-(");
+        } else {
+            showAlert("fail", "Error: " + response.responseJSON.message);
+        }
+    });
 }
 
 // Bug workaround
@@ -173,6 +227,11 @@ $("#editProductModal").on("show.bs.modal", function (event) {
     modal.find('#editProductID').val(data.id);
     modal.find('#editProductName').val(data.name);
     modal.find('#editProductDescription').val(data.description);
+    if (data.active === "Yes") {
+        modal.find('#editProductActive').val("1");
+    } else {
+        modal.find('#editProductActive').val("");
+    }
 });
 
 $("#editUserModal").on("show.bs.modal", function (event) {
@@ -190,4 +249,72 @@ $("#editUserModal").on("show.bs.modal", function (event) {
     modal.find('#editUserID').val(data.id);
     modal.find('#editUserName').val(data.username);
     modal.find('#editUserRole').val(data.role);
+});
+
+$("#deleteFeatureModal").on("show.bs.modal", function (event) {
+    var button = $(event.relatedTarget)
+    var id = button.data("id")
+    var modal = $(this)
+    // Thanks guys!
+    // http://stackoverflow.com/questions/7364150/find-object-by-id-in-an-array-of-javascript-objects
+    var result = $.grep(featureRequestViewModel.featureData(), function (e) { return e.id == id; });
+    if (result.length != 1) {
+        // Need to put an error message here.
+        console.log("ooops");
+    }
+    data = result[0];
+    modal.find('.modal-title').text('Delete Feature: ' + data.title);
+    modal.find('#deleteFeatureText').text("Are you sure you want to delete " + data.title + "?");
+    modal.find('#deleteFeatureID').val(id);
+});
+
+$("#deleteClientModal").on("show.bs.modal", function (event) {
+    var button = $(event.relatedTarget)
+    var id = button.data("id")
+    var modal = $(this)
+    // Thanks guys!
+    // http://stackoverflow.com/questions/7364150/find-object-by-id-in-an-array-of-javascript-objects
+    var result = $.grep(featureRequestViewModel.clientData(), function (e) { return e.id == id; });
+    if (result.length != 1) {
+        // Need to put an error message here.
+        console.log("ooops");
+    }
+    data = result[0];
+    modal.find('.modal-title').text('Delete Client: ' + data.name);
+    modal.find('#deleteClientText').text("Are you sure you want to delete " + data.name + " and all data associated with that client?");
+    modal.find('#deleteClientID').val(id);
+});
+
+$("#deleteProductModal").on("show.bs.modal", function (event) {
+    var button = $(event.relatedTarget)
+    var id = button.data("id")
+    var modal = $(this)
+    // Thanks guys!
+    // http://stackoverflow.com/questions/7364150/find-object-by-id-in-an-array-of-javascript-objects
+    var result = $.grep(featureRequestViewModel.productData(), function (e) { return e.id == id; });
+    if (result.length != 1) {
+        // Need to put an error message here.
+        console.log("ooops");
+    }
+    data = result[0];
+    modal.find('.modal-title').text('Deactivate Product Area: ' + data.name);
+    modal.find('#deleteProductText').text("Are you sure you want to deactivate the product area " + data.name + "? Current features with this product area will not be changed.");
+    modal.find('#deleteProductID').val(id);
+});
+
+$("#deleteUserModal").on("show.bs.modal", function (event) {
+    var button = $(event.relatedTarget)
+    var id = button.data("id")
+    var modal = $(this)
+    // Thanks guys!
+    // http://stackoverflow.com/questions/7364150/find-object-by-id-in-an-array-of-javascript-objects
+    var result = $.grep(featureRequestViewModel.userData(), function (e) { return e.id == id; });
+    if (result.length != 1) {
+        // Need to put an error message here.
+        console.log("ooops");
+    }
+    data = result[0];
+    modal.find('.modal-title').text('Deactivate User: ' + data.username);
+    modal.find('#deleteUserText').text("Are you sure you want to deactivate " + data.username + "?");
+    modal.find('#deleteUserID').val(id);
 });

@@ -17,29 +17,36 @@
         <div id="failAlert" class="alert alert-danger" role="alert" style="display: none;">Danger!</div>
     </div>
     <div class="container-responsive">
-        <div role="tabpanel" class="card">
-            <div class="card-header">
-                <ul class="nav nav-tabs card-header-tabs" role="tablist">
-                    <li class="nav-item">
-                        <a class="nav-link active" id="features-tab" data-toggle="tab" href="#features" role="tab" aria-controls="features" aria-expanded="true">Features</a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Administration</a>
-                        <div class="dropdown-menu">
-                            <a class="dropdown-item" id="clients-tab" href="#clients" role="tab" data-toggle="tab" aria-controls="clients" aria-expanded="true">Clients</a>
-                            <a class="dropdown-item" id="productareas-tab" href="#productareas" role="tab" data-toggle="tab" aria-controls="productareas" aria-expanded="true">Product Areas</a>
-                            <a class="dropdown-item" id="users-tab" href="#users" role="tab" data-toggle="tab" aria-controls="users" aria-expanded="true">Users</a>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-            <div class="tab-content card-block">
-                <div role="tabpanel" class="tab-pane active fade show" id="features" aria-labelledby="features-tab" aria-expanded="true"><div class="row">{% include "data_views/features.html" %}</div></div>
-                <div role="tabpanel" class="tab-pane" id="clients" aria-labelledby="clients-tab" aria-expanded="false"><div class="row">{% include "data_views/clients.html" %}</div></div>
-                <div role="tabpanel" class="tab-pane" id="productareas" aria-labelledby="productareas-tab" aria-expanded="false"><div class="row">{% include "data_views/products.html" %}</div></div>
-                <div role="tabpanel" class="tab-pane" id="users" aria-labelledby="users-tab" aria-expanded="false"><div class="row">{% include "data_views/users.html" %}</div></div>
+        <div class="row">
+            <div class="col-xl-1"></div>
+            <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-10">
+                <div role="tabpanel" class="card">
+                    <div class="card-header">
+                        <ul class="nav nav-tabs card-header-tabs" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="features-tab" data-toggle="tab" href="#features" role="tab" aria-controls="features" aria-expanded="true">Features</a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Administration</a>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" id="clients-tab" href="#clients" role="tab" data-toggle="tab" aria-controls="clients" aria-expanded="true">Clients</a>
+                                    <a class="dropdown-item" id="productareas-tab" href="#productareas" role="tab" data-toggle="tab" aria-controls="productareas" aria-expanded="true">Product Areas</a>
+                                    <a class="dropdown-item" id="users-tab" href="#users" role="tab" data-toggle="tab" aria-controls="users" aria-expanded="true">Users</a>
+                                </div>
+                            </li>
+                        </ul>
+                        <a href="logout" style="position: absolute;top: 12px;right: 0%;transform: translateX(-30%);z-index: 1;">Logout</a>
+                    </div>
+                    <div class="tab-content card-block">
+                        <div role="tabpanel" class="tab-pane active fade show" id="features" aria-labelledby="features-tab" aria-expanded="true"><div class="row">{% include "data_views/features.html" %}</div></div>
+                        <div role="tabpanel" class="tab-pane" id="clients" aria-labelledby="clients-tab" aria-expanded="false"><div class="row">{% include "data_views/clients.html" %}</div></div>
+                        <div role="tabpanel" class="tab-pane" id="productareas" aria-labelledby="productareas-tab" aria-expanded="false"><div class="row">{% include "data_views/products.html" %}</div></div>
+                        <div role="tabpanel" class="tab-pane" id="users" aria-labelledby="users-tab" aria-expanded="false"><div class="row">{% include "data_views/users.html" %}</div></div>
 
+                    </div>
+                </div>
             </div>
+            <div class="col-xl-1"></div>
         </div>
     </div>
     {% include "modals/feature.html" %}
@@ -55,7 +62,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout.mapping/2.4.1/knockout.mapping.min.js" integrity="sha256-gaGobNk1cPaj0abcVmyZxUYgCPsueCJwN5i4DjC4BS0=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.min.js" integrity="sha256-1fK87Pt9T7XXn/Vj3CWSfJlZkL5f73092A8YL7p7avc=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.0-RC3/js/bootstrap-datepicker.min.js" integrity="sha256-cxy6ZG28yUYUJuVa4jSB0REugsTXuiaAVAVamfh5wmk=" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.min.js" integrity="sha256-1fK87Pt9T7XXn/Vj3CWSfJlZkL5f73092A8YL7p7avc=" crossorigin="anonymous"></script>
 
     <script src="static/js/knockout.bindings.orderable.js"></script>
     <script src="static/js/jquery.serialize-object.js"></script>

@@ -19,7 +19,7 @@
                         <label for="addUserRole" class="col-4 col-form-label">Role</label>
                         <div class="col-8">
                             <select class="form-control" id="addUserRole" name="role" required>
-                                <option value="Client">Client</option>
+                                <option value="Inactive">Inactive</option>
                                 <option value="Employee">Employee</option>
                                 <option value="Administrator">Administrator</option>
                             </select>
@@ -57,7 +57,7 @@
                         <label for="editUserRole" class="col-4 col-form-label">Role</label>
                         <div class="col-8">
                             <select class="form-control" id="editUserRole" name="role" required>
-                                <option value="Client">Client</option>
+                                <option value="Inactive">Inactive</option>
                                 <option value="Employee">Employee</option>
                                 <option value="Administrator">Administrator</option>
                             </select>
@@ -77,17 +77,18 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="deleteUserModalLabel">Delete User Request</h5>
+                <h5 class="modal-title" id="deleteUserModalLabel"></h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                Are you sure you want to delete ....?
+                <input type="hidden" id="deleteUserID" name="id" value="">
+                <p id="deleteUserText"></p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
-                <button type="button" class="btn btn-danger" data-dismiss="modal">Yes</button>
+                <button type="button" class="btn btn-danger" onclick="deleteDataForm('user', 'username')">Yes</button>
             </div>
         </div>
     </div>

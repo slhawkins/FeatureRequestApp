@@ -5,7 +5,6 @@ from featurerequest.user_auth import roles
 from featurerequest.models import \
     User, UserSchema,\
     Client, ClientSchema,\
-    ClientNote, ClientNoteSchema,\
     Product, ProductSchema,\
     Feature, FeatureSchema,\
     FeatureTodo, FeatureTodoSchema,\
@@ -71,6 +70,14 @@ class UserAPI(Resource):
         print(result)
         return make_response(jsonify({'message': 'Updated a user.', 'user': result.data}), 201)
 
+    @roles('Administrator')
+    def delete(self, id):
+        if current_user.id == id:
+            return make_response(jsonify({'message': 'You cannot modify your own attributes.'}), 400)
+        data = User.query.get_or_404(id)
+        data.role = 'Inactive'
+        db.session.commit()
+        return make_response(jsonify({'message': 'Set the user to inactive.', 'user': {'username': data.username }}), 200)
 
 class ClientAPI(Resource):
     @roles('Employee', 'Administrator')
@@ -116,6 +123,22 @@ class ClientAPI(Resource):
         result = schema.dump(Client.query.get(data.id))
         print(result)
         return make_response(jsonify({'message': 'Updated a client.', 'client': result.data}), 201)
+
+    @roles('Administrator')
+    def delete(self, id):
+        data = Client.query.get_or_404(id)
+        name = data.name
+        # Remove all dependencies
+        # I'm certain there's a faster way to accomplish this. My in_ filter didn't let me call delete() :-(
+        featureIDs = [x[0] for x in db.session.query(Feature.id).filter_by(client_id=id).all()]
+        print(featureIDs)
+        for featureID in featureIDs:
+            db.session.query(FeatureNote).filter_by(feature_id=featureID).delete()
+            db.session.query(FeatureTodo).filter_by(feature_id=featureID).delete()
+        db.session.query(Feature).filter_by(client_id=id).delete()
+        db.session.query(Client).filter_by(id=id).delete()
+        db.session.commit()
+        return make_response(jsonify({'message': 'Removed a client.', 'client': {'name': name }}), 200)
 
 
 class ClientNoteAPI(Resource):
@@ -191,6 +214,13 @@ class ProductAPI(Resource):
         print(result)
         return make_response(jsonify({'message': 'Updated a product.', 'product': result.data}), 201)
 
+    @roles('Administrator')
+    def delete(self, id):
+        data = Product.query.get_or_404(id)
+        data.active = False
+        db.session.commit()
+        return make_response(jsonify({'message': 'Deactivated the product area.', 'product': {'name': data.name }}), 200)
+
 class FeatureAPI(Resource):
     @roles('Employee', 'Administrator')
     def get(self, id=None):
@@ -212,6 +242,10 @@ class FeatureAPI(Resource):
         json_data = request.get_json()
         if not json_data:
             return make_response(jsonify({'message': 'No data provided'}), 400)
+        if json_data['target_date'] != "":
+            json_data['target_date'] = str(datetime.strptime(json_data['target_date'], "%m/%d/%Y").strftime("%Y-%m-%d"))
+        else:
+            del json_data['target_date']
         # Update the priority when needed.
         results = Feature.query.filter(Feature.client_id == json_data['client_id']).filter(Feature.priority >= json_data['priority']).all()
         for row in results:
@@ -232,6 +266,8 @@ class FeatureAPI(Resource):
         json_data = request.get_json()
         if json_data['target_date'] != "":
             json_data['target_date'] = str(datetime.strptime(json_data['target_date'], "%m/%d/%Y").strftime("%Y-%m-%d"))
+        else:
+            del json_data['target_date']
         if not json_data:
             return make_response(jsonify({'message': 'No data provided'}), 400)
         data = Feature.query.get_or_404(json_data['id'])
@@ -245,6 +281,16 @@ class FeatureAPI(Resource):
         result = schema.dump(Feature.query.get(data.id))
         print(result)
         return make_response(jsonify({'message': 'Updated a feature.', 'feature': result.data}), 201)
+
+    @roles('Employee', 'Administrator')
+    def delete(self, id):
+        data = Feature.query.get_or_404(id)
+        title = data.title
+        db.session.query(FeatureNote).filter_by(feature_id=id).delete()
+        db.session.query(FeatureTodo).filter_by(feature_id=id).delete()
+        db.session.query(Feature).filter_by(id=id).delete()
+        db.session.commit()
+        return make_response(jsonify({'message': 'Removed a feature.', 'feature': {'title': title }}), 200)
 
 
 class FeatureTodoAPI(Resource):
