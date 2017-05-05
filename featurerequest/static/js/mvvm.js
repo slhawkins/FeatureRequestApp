@@ -16,30 +16,20 @@ function FeatureRequestViewModel() {
     self.featureColumns.subscribe(function () { self.featureWatch(1 + self.featureWatch()); });
     self.featurePriorityMin = ko.observable(1);
     self.featurePriorityMax = ko.observable(10);
-    /*self.featurePriorityMin.subscribe(function () {
-        
-        $("#featurePrioritySlider").slider({});
-        $("#featurePrioritySlider").slider('setAttribute', 'min', self.featurePriorityMin());
-        $("#featurePrioritySlider").slider('setAttribute', 'max', self.featurePriorityMax());
-        $("#featurePrioritySlider").slider('setAttribute', 'value', [self.featurePriorityMin(), self.featurePriorityMax()]);
-        $("#featurePrioritySlider").slider('setAttribute', 'ticks', [self.featurePriorityMin(), self.featurePriorityMax()]);
-        $("#featurePrioritySlider").slider('setAttribute', 'ticks_labels', [self.featurePriorityMin(), self.featurePriorityMax()]);
-        // This guy is for a bug in the slider code - PR will be sent in!
-        $(".slider-tick-label").eq(0).text(self.featurePriorityMin());
-        $("#featurePrioritySlider").slider('refresh');
+    self.featurePriorityMin.subscribe(function () {
+        if (self.sliderInit) {
+            $("#slider-range").slider("option", "min", self.featurePriorityMin());
+            $("#slider-range").slider("option", "value", [self.featurePriorityMin(), self.featurePriorityMax()]);
+            $("#sliderAmount").text("Priority Range: " + $("#slider-range").slider("values", 0) + " - " + $("#slider-range").slider("values", 1));
+        }
     });
     self.featurePriorityMax.subscribe(function () {
-        $("#featurePrioritySlider").slider({});
-        $("#featurePrioritySlider").slider('setAttribute', 'min', self.featurePriorityMin());
-        $("#featurePrioritySlider").slider('setAttribute', 'max', self.featurePriorityMax());
-        $("#featurePrioritySlider").slider('setAttribute', 'value', [self.featurePriorityMin(), self.featurePriorityMax()]);
-        $("#featurePrioritySlider").slider('setAttribute', 'ticks', [self.featurePriorityMin(), self.featurePriorityMax()]);
-        $("#featurePrioritySlider").slider('setAttribute', 'ticks_labels', [self.featurePriorityMin(), self.featurePriorityMax()]);
-        // This guy is for a bug in the slider code - PR will be sent in!
-        $(".slider-tick-label").eq(1).text(self.featurePriorityMax());
-        $("#featurePrioritySlider").slider('refresh');
-        
-    });*/
+        if (self.sliderInit) {
+            $("#slider-range").slider("option", "max", self.featurePriorityMax());
+            $("#slider-range").slider("option", "value", [self.featurePriorityMin(), self.featurePriorityMax()]);
+            $("#sliderAmount").text("Priority Range: " + $("#slider-range").slider("values", 0) + " - " + $("#slider-range").slider("values", 1));
+        }
+    });
     // Clients
     self.clientWatch = ko.observable(1);
     self.clientData = ko.observableArray([]);
@@ -126,9 +116,33 @@ function FeatureRequestViewModel() {
                 element.multiselect('updateButtonText');
                 // This is a manual trigger of the dropdown to update the filtered data.
                 $("#featureProductFilterContainer").trigger("hidden.bs.dropdown");
+
             }, 500);
         }
     }
+
+    // Had an issue with the slider not being callable, this is a workaround for now.
+    self.sliderInit = false
+    self.initSlider = function () {
+        if (!self.sliderInit) {
+            self.sliderInit = true;
+            $("#slider-range").slider({
+                range: true,
+                min: self.featurePriorityMin(),
+                max: self.featurePriorityMax(),
+                values: [self.featurePriorityMin(), self.featurePriorityMax()],
+                slide: function (event, ui) {
+                    $("#sliderAmount").text("Priority Range: " + ui.values[0] + " - " + ui.values[1]);
+                },
+                stop: function (event, ui) {
+                    console.log(ui.values);
+                    featureRequestViewModel.updateFilter("priority", ui.values);
+                }
+            });
+            $("#sliderAmount").text("Priority Range: " + $("#slider-range").slider("values", 0) + " - " + $("#slider-range").slider("values", 1));
+        }
+    }
+
 
     /* Sorting drag and drop - largely taken from the example. */
     self.dragAndDropSortableIterms = ["Client", "Priority", "Product Area", "Target Date"];
@@ -335,9 +349,10 @@ function FeatureRequestViewModel() {
     }
 };
 
+var featureRequestViewModel = new FeatureRequestViewModel();
+ko.applyBindings(featureRequestViewModel);
+
 $(function () {
-    var featureRequestViewModel = new FeatureRequestViewModel();
-    ko.applyBindings(featureRequestViewModel);
     /* Default options for the multiselects used for filtering. */
     var defaultMultiselectOptions = {
         buttonWidth: '100%',
@@ -375,17 +390,21 @@ $(function () {
         buttonContainer: '<div class="btn-group m-2" id="featureProductFilterContainer" />',
     }));
     /*
-    // Slider setup
-    $("#featurePrioritySlider").slider({
-        'min': 1,
-        'max': 10,
-        'value': [1, 10],
-        'ticks': [1, 10],
-        'ticks_labels': [1, 10]
-    });
-    $("#featurePrioritySlider").on("slideStop", function (event) {
-        featureRequestViewModel.updateFilter("priority", event.value);
-    });
-    */
+    $("#slider-range").slider({
+        range: true,
+        min: 1,
+        max: 10,
+        values: [1, 10],
+        slide: function (event, ui) {
+            $("#sliderAmount").text("Priority Range: " + ui.values[0] + " - " + ui.values[1]);
+        },
+        stop: function (event, ui) {
+            console.log(ui.values);
+            featureRequestViewModel.updateFilter("priority", ui.values);
+        }
+    });*/
+    //$("#sliderAmount").text("Priority Range: " + $("#slider-range").slider("values", 0) + " - " + $("#slider-range").slider("values", 1));
+    
     featureRequestViewModel.updateData();
+    featureRequestViewModel.initSlider();
 });

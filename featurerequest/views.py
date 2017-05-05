@@ -68,7 +68,14 @@ def populate():
         Feature(user_id=3, client_id=1, product_id=3, title='Pre-populate New Field', description='Client has a new field they feel is relevent to claims and should be added to the claim automatically - too many agents have typed the field incorrectly. :-(', target_date='2018-01-31', ticket_url='http://www.example.com', priority=3),
         Feature(user_id=3, client_id=2, product_id=3, title='Alexa Voice', description='Client would like the capability to talk through various portions of a claim with Alexa.', target_date='2017-09-30', ticket_url='https://developer.amazon.com/alexa', priority=1),
         Feature(user_id=3, client_id=2, product_id=3, title='Payment Method', description='Client would like to add Bitcoin as a form of payment.', target_date='2018-01-01', ticket_url='http://www.example.com', priority=2),
-        Feature(user_id=3, client_id=3, product_id=4, title='Combine Reports', description='Client would like to combine data from individual reports to make a single Network Office (NO) report.', target_date='2017-06-01', ticket_url='http://www.examplecom', priority=1)
+        Feature(user_id=3, client_id=3, product_id=4, title='Combine Reports', description='Client would like to combine data from individual reports to make a single Network Office (NO) report.', target_date='2017-06-01', ticket_url='http://www.examplecom', priority=1),
+        Feature(user_id=3, client_id=1, product_id=2, title='Hybrid Billing Automation', description='', target_date='2018-02-15', ticket_url='http://www.examplecom', priority=4),
+        Feature(user_id=3, client_id=3, product_id=4, title='Custom Report', description='', target_date='2017-10-15', ticket_url='http://www.examplecom', priority=2),
+        Feature(user_id=3, client_id=3, product_id=3, title='Legal Expense Changes', description='', target_date='2018-01-01', ticket_url='http://www.examplecom', priority=3),
+        Feature(user_id=3, client_id=2, product_id=1, title='Change Endorsement Logs', description='', target_date='2018-02-01', ticket_url='http://www.examplecom', priority=3),
+        Feature(user_id=3, client_id=1, product_id=4, title='Report Export Format', description='', target_date='2018-03-01', ticket_url='http://www.examplecom', priority=5),
+        Feature(user_id=3, client_id=2, product_id=4, title='Add Field', description='', target_date='2018-03-01', ticket_url='http://www.examplecom', priority=4)        ,
+        Feature(user_id=3, client_id=3, product_id=1, title='Reserve Calculation', description='', target_date='2018-05-01', ticket_url='http://www.examplecom', priority=4)
     ]
     for feature in features:
         db.session.add(feature)

@@ -8,7 +8,7 @@ $("#addFeatureForm").validate({
 });
 $("#editFeatureForm").validate({
     rules: {
-        addFeaturePriority: {
+        editFeaturePriority: {
             min: 1
         }
     }
@@ -22,7 +22,8 @@ $("#addClientForm").validate({
 });
 $("#editClientForm").validate({
     rules: {
-        addClientPhone: {
+        editClientPhone: {
+            required: true,
             phoneUS: true
         }
     }
@@ -69,7 +70,6 @@ function addDataForm(data_type, show_value) {
 function editDataForm(data_type, show_value) {
     var type_upper = data_type.charAt(0).toUpperCase() + data_type.slice(1);
     var json_data = $("#edit" + type_upper + "Form").serializeJSON();
-    console.log($("#edit" + type_upper + "ID").val());
     if ($("#edit" + type_upper + "Form").valid()) {
         var sendData = $.ajax({
             url: data_type + '/' + $("#edit" + type_upper + "ID").val(),
@@ -145,11 +145,9 @@ $("#addFeatureModal .datepicker").on("show", function (e) {
     e.stopPropagation();
 });
 $("#editFeatureModal").on("show.bs.modal", function (event) {
-    console.log(event);
     var button = $(event.relatedTarget)
     var id = button.data("id")
     var modal = $(this)
-    console.log(id);
     // Thanks guys!
     // http://stackoverflow.com/questions/7364150/find-object-by-id-in-an-array-of-javascript-objects
     var result = $.grep(featureRequestViewModel.featureData(), function (e) { return e.id == id; });
@@ -159,7 +157,6 @@ $("#editFeatureModal").on("show.bs.modal", function (event) {
         // Need to put an error message here.
     }
     data = result[0];
-    console.log(data);
     modal.find('.modal-title').text('Edit Feature: ' + data.title);
     modal.find('#editFeatureID').val(data.id);
     modal.find('#editFeatureTitle').val(data.title);
@@ -173,8 +170,23 @@ $("#editFeatureModal").on("show.bs.modal", function (event) {
     } else {
         modal.find('.datepicker').datepicker('update', '');
     }
-    modal.find('#editFeatureURL').val(data.url);
+    modal.find('#editFeatureURL').val(data.ticket_url);
     modal.find('#editFeatureProduct').val(data.product_id);
+    // Reset product options. We want a feature with a disabled product to still be able to save with it.
+    $("#editFeatureModal").find("#editFeatureProduct > option").each(function () {
+        var element = $(this);
+        // Reset the settings...
+        element.show();
+        if (element.data("active") != "Yes") {
+            element.attr("disabled", "disabled");
+        }
+        // Check if we should hide it or enable it.
+        if (element.attr("disabled") == "disabled" && this.value != data.product_id) {
+            element.hide()
+        } else {
+            element.attr("disabled", false);
+        }
+    });
 });
 
 

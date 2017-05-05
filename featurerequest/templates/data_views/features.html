@@ -1,17 +1,25 @@
-<div class="col-3 pr-1">
-    <div class="card">
-        <div class="card-header">
-            <h5 class="text-center">Filters and Sorting</h5>
-        </div>
-        <div class="card-block pl-1">
-            <select id="featureClientFilter" multiple="multiple" data-bind="options: clientNamesOrdered, optionsText: 'name', optionsValue: 'id', optionsAfterRender: updateClientMultiselect"></select>
-            <select id="featureProductFilter" multiple="multiple" data-bind="options: productNamesOrdered, optionsText: 'name', optionsValue: 'id', optionsAfterRender: updateProductMultiselect"></select>
-            <div class="card card-block bg-faded ml-3 p-2 mt-2">
-                <h6 class="text-center">Sort Order</h6>
-                <div class="sortable" data-bind="with: sortable">
-                    <div class="btn-group-vertical btn-block" data-bind="foreach: items">
-                        <button class="btn btn-secondary btn-block draggable" style="width: 100%; overflow: hidden; text-overflow: ellipsis;"
-                                data-bind="text: value, css: { dragging: dragging },
+<div class="row">
+
+    <div class="col-sm-4 col-md-3 pr-1 pl-0">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="text-center">Filters and Sorting</h5>
+            </div>
+            <div class="card-block pl-1">
+                <select id="featureClientFilter" multiple="multiple" data-bind="options: clientNamesOrdered, optionsText: 'name', optionsValue: 'id', optionsAfterRender: updateClientMultiselect"></select>
+                <select id="featureProductFilter" multiple="multiple" data-bind="options: productNamesOrdered, optionsText: 'name', optionsValue: 'id', optionsAfterRender: updateProductMultiselect"></select>
+                <div class="ml-2 px-2">
+                    <h6 class="px-1" id="sliderAmount">Priority Range: </h6>
+                </div>
+                <div class="ml-3 px-2 mb-3">
+                    <div id="slider-range"></div>
+                </div>
+                <div class="card card-block bg-faded ml-3 p-2 mt-2">
+                    <h6 class="text-center">Sort Order</h6>
+                    <div class="sortable" data-bind="with: sortable">
+                        <div class="btn-group-vertical btn-block" data-bind="foreach: items">
+                            <button class="btn btn-secondary btn-block draggable" style="width: 100%; overflow: hidden; text-overflow: ellipsis;"
+                                    data-bind="text: value, css: { dragging: dragging },
                                            dragZone: { name: 'sortable',
                                              dragStart: $parent.dragStart,
                                              dragEnd: $parent.dragEnd
@@ -21,34 +29,34 @@
                                              dragOver: $parent.reorder,
                                              data: { items: $parent.items, item: $data }
                                            }" />
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-<div class="col-9 pl-1">
-    <div class="card card-block bg-faded">
-        <table id="featureTable" class="table table-sm table-hover table-bordered table-responsive" style="width: auto !important;" data-bind="with: featureData">
-            <thead class="">
-                <tr data-bind="foreach: $root.featureColumns">
-                    <!-- ko if: ($index() == 0) -->
-                    <th></th>
-                    <!-- /ko -->
-                    <th class="text-nowrap"><p class="m-0" data-bind="text: $root.featureColumnMap[$data]"></p></th>
-                    <!-- ko if: ($index() == $root.featureColumns().length - 1) -->
-                    <th style="width:50px">
-                        <div class="pull-right">
-                            <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#addFeatureModal">
-                                <i class="fa fa-plus" aria-hidden="true"></i> Add
-                            </button>
-                        </div>
-                    </th>
-                    <!-- /ko -->
-                </tr>
-            </thead>
-            <tbody data-bind="foreach: { data: $root.featureData, as: 'feature'}">
-                <!-- ko if: (feature.enable) -->
+    <div class="col-sm-8 col-md-9 pl-1 pr-0">
+        <div class="card card-block bg-faded">
+            <table id="featureTable" class="table table-sm table-hover table-bordered table-responsive" style="width: auto !important;" data-bind="with: featureData">
+                <thead class="">
+                    <tr data-bind="foreach: $root.featureColumns">
+                        <!-- ko if: ($index() == 0) -->
+                        <th></th>
+                        <!-- /ko -->
+                        <th class="text-nowrap"><p class="m-0" data-bind="text: $root.featureColumnMap[$data]"></p></th>
+                        <!-- ko if: ($index() == $root.featureColumns().length - 1) -->
+                        <th style="width:50px">
+                            <div class="pull-right">
+                                <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#addFeatureModal">
+                                    <i class="fa fa-plus" aria-hidden="true"></i> Add
+                                </button>
+                            </div>
+                        </th>
+                        <!-- /ko -->
+                    </tr>
+                </thead>
+                <tbody data-bind="foreach: { data: $root.featureData, as: 'feature'}">
+                    <!-- ko if: (feature.enable) -->
                     <tr data-bind="foreach: $root.featureColumns">
                         <!-- ko if: ($index() == 0) -->
                         <td data-bind="attr: {'onClick': 'featureToggleDisplay(&quot;#showFeature_' + feature['id'] + '&quot;);'}">
@@ -74,8 +82,9 @@
                     <tr style="display: none;" class="featureExpandable" data-bind="attr: {'id': 'showFeature_' + feature['id']}">
                         <td data-bind="attr: {'colspan': $root.featureColumns().length + 2, 'id': 'featureNoteDisplay_' + feature['id']}"></td>
                     </tr>
-                <!-- /ko -->
-            </tbody>
-        </table>
+                    <!-- /ko -->
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>

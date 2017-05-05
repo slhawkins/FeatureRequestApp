@@ -12,7 +12,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/9.8.0/css/bootstrap-slider.min.css" integrity="sha256-SimsGsu3ragCO+uhwd4Um5PUzUuc3Eg+pxshtVHXYpM=" crossorigin="anonymous" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css" integrity="sha256-rByPlHULObEjJ6XQxW/flG2r+22R5dKiAoef+aXWfik=" crossorigin="anonymous" />
     <link href="static/css/featurerequest.css" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+    <link href="static/css/jquery-ui.min.css" rel="stylesheet">
+    <script src="static/js/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.16.0/jquery.validate.min.js" integrity="sha256-UOSXsAgYN43P/oVrmU+JlHtiDGYWN2iHnJuKY9WD+Jg=" crossorigin="anonymous"></script>
@@ -23,7 +24,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.0-RC3/js/bootstrap-datepicker.min.js" integrity="sha256-cxy6ZG28yUYUJuVa4jSB0REugsTXuiaAVAVamfh5wmk=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js" integrity="sha256-1hjUhpc44NwiNg8OwMu2QzJXhD8kcj+sJA3aCQZoUjg=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout-dragdrop/2.5.1/knockout.dragdrop.js" integrity="sha256-60Pvf3zzTuqHNeXnGKPShKA/G69znTA++FneUvxZQVc=" crossorigin="anonymous"></script>
-    <script defer src="static/js/knockout.bindings.orderable.js"></script>
+    <script src="static/js/knockout.bindings.orderable.js"></script>
+    
     <script async src="static/js/thenBy.min.js"></script>
     <script async src="static/js/jquery.serialize-object.js"></script>
 </head>
@@ -54,7 +56,7 @@
                         <a href="logout" style="position: absolute;top: 12px;right: 0%;transform: translateX(-30%);z-index: 1;">Logout</a>
                     </div>
                     <div class="tab-content card-block">
-                        <div role="tabpanel" class="tab-pane active fade show" id="features" aria-labelledby="features-tab" aria-expanded="true"><div class="row">{% include "data_views/features.html" %}</div></div>
+                        <div role="tabpanel" class="tab-pane active fade show" id="features" aria-labelledby="features-tab" aria-expanded="true"><div class="container-fluid">{% include "data_views/features.html" %}</div></div>
                         <div role="tabpanel" class="tab-pane" id="clients" aria-labelledby="clients-tab" aria-expanded="false"><div class="row">{% include "data_views/clients.html" %}</div></div>
                         <div role="tabpanel" class="tab-pane" id="productareas" aria-labelledby="productareas-tab" aria-expanded="false"><div class="row">{% include "data_views/products.html" %}</div></div>
                         <div role="tabpanel" class="tab-pane" id="users" aria-labelledby="users-tab" aria-expanded="false"><div class="row">{% include "data_views/users.html" %}</div></div>
@@ -69,9 +71,9 @@
     {% include "modals/client.html" %}
     {% include "modals/product.html" %}
     {% include "modals/user.html" %}
-    <script defer src="static/js/modals.js"></script>
     <script defer src="static/js/featurerequest.js"></script>
     <script defer src="static/js/defaults.js"></script>
     <script defer src="static/js/mvvm.js"></script>
+    <script defer src="static/js/modals.js"></script>
 </body>
 </html>

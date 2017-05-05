@@ -33,7 +33,7 @@
                     <div class="form-group row">
                         <label for="addFeaturePriority" class="col-4 col-form-label">Priority</label>
                         <div class="col-8">
-                            <input class="form-control" type="number" value="" name="priority" id="addFeaturePriority" required>
+                            <input class="form-control" type="number" min="1" value="" name="priority" id="addFeaturePriority" required>
                         </div>
                     </div>
                     <div class="form-group row">
@@ -54,10 +54,12 @@
                     <div class="form-group row">
                         <label for="addFeatureProduct" class="col-4 col-form-label">Product Area</label>
                         <div class="col-8">
-                            <select class="form-control" id="addFeatureProduct" name="product_id" required 
-                                    data-bind="options: productNamesOrdered,
-                                               optionsText: 'name' ,
-                                               optionsValue: 'id'"></select>
+                            <select class="form-control" id="addFeatureProduct" name="product_id" 
+                                    data-bind="foreach: productNamesOrdered" required>
+                                <!-- ko if: active == "Yes" -->
+                                <option data-bind="text: name, value: id"></option>
+                                <!-- /ko -->
+                            </select>
                         </div>
                     </div>
                 </form>
@@ -105,7 +107,7 @@
                     <div class="form-group row">
                         <label for="editFeaturePriority" class="col-4 col-form-label">Priority</label>
                         <div class="col-8">
-                            <input class="form-control" type="number" value="" name="priority" id="editFeaturePriority" required>
+                            <input class="form-control" type="number" min="1" value="" name="priority" id="editFeaturePriority" required>
                         </div>
                     </div>
                     <div class="form-group row">
@@ -126,11 +128,17 @@
                     <div class="form-group row">
                         <label for="editFeatureProduct" class="col-4 col-form-label">Product Area</label>
                         <div class="col-8">
-                            <select class="form-control" id="editFeatureProduct" name="product_id" required
-                                    data-bind="options: productNamesOrdered,
-                                               optionsText: 'name' ,
-                                               optionsValue: 'id'"></select>
+                            <select class="form-control" id="editFeatureProduct" name="product_id"
+                                    data-bind="foreach: productNamesOrdered" required>
+                                <!-- ko if: active == "Yes" -->
+                                <option data-bind="text: name, value: id, attr:{'data-active': active}"></option>
+                                <!-- /ko -->
+                                <!-- ko ifnot: active == "Yes" -->
+                                <option data-bind="text: name, value: id" disabled></option>
+                                <!-- /ko -->
+                            </select>
                         </div>
+
                     </div>
                 </form>
             </div>
