@@ -7,314 +7,72 @@ function showAlert(type, text) {
     $("#" + type + "Alert").delay(5000).fadeOut();
 }
 
-// Modal Validations
-$("#addFeatureForm").validate({
-    rules: {
-        addFeaturePriority: {
-            min: 1
-        }
-    }
-});
-$("#editFeatureForm").validate({
-    rules: {
-        addFeaturePriority: {
-            min: 1
-        }
-    }
-});
-$("#addClientForm").validate({
-    rules: {
-        addClientPhone: {
-            phoneUS: true
-        }
-    }
-});
-$("#editClientForm").validate({
-    rules: {
-        addClientPhone: {
-            phoneUS: true
-        }
-    }
-});
-
-$("#addProductForm").validate();
-$("#editProductForm").validate();
-$("#addUserForm").validate();
-$("#editUserForm").validate();
-
-
-// Sends a POST to the server with the form data.
-//     data_type: 'feature', 'client', 'product', or 'user'
-//     show_value: Value from the response that is displayed in the success message.
-function addDataForm(data_type, show_value) {
-    var type_upper = data_type.charAt(0).toUpperCase() + data_type.slice(1);
-    var json_data = $("#add" + type_upper + "Form").serializeJSON();
-    if ($("#add" + type_upper + "Form").valid()) {
-        var sendData = $.ajax({
-            url: data_type,
-            method: "POST",
-            data: json_data,
-            contentType: "application/json; charset=utf-8",
-            dataType: "json"
-        });
-        $("#add" + type_upper + "Modal").modal('hide');
-        $("#add" + type_upper + "Form").trigger("reset");
-        if (data_type == 'feature') {
-            $("addFeatureDate").datepicker('clearDates');
-        }
-        sendData.done(function (msg) {
-            showAlert("success", "Added " + msg[data_type][show_value] + " to the database.");
-            featureRequestViewModel.updateData(data_type);
-        });
-        sendData.fail(function (response, textStatus) {
-            showAlert("fail", "Error: " + response.responseJSON.message);
-        });
-    }
-}
-
-// Sends a PUT to the server with the form data.
-//     data_type: 'feature', 'client', 'product', or 'user'
-//     show_value: Value from the response that is displayed in the success message.
-function editDataForm(data_type, show_value) {
-    var type_upper = data_type.charAt(0).toUpperCase() + data_type.slice(1);
-    var json_data = $("#edit" + type_upper + "Form").serializeJSON();
-    console.log($("#edit" + type_upper + "ID").val());
-    if ($("#edit" + type_upper + "Form").valid()) {
-        var sendData = $.ajax({
-            url: data_type + '/' + $("#edit" + type_upper + "ID").val(),
-            method: "PUT",
-            data: json_data,
-            contentType: "application/json; charset=utf-8",
-            dataType: "json"
-        });
-        $("#edit" + type_upper + "Modal").modal('hide');
-        $("#edit" + type_upper + "Form").trigger("reset");
-        sendData.done(function (msg) {
-            showAlert("success", "Updated " + msg[data_type][show_value] + ".");
-            featureRequestViewModel.updateData(data_type);
-        });
-        sendData.fail(function (response, textStatus) {
-            if (response === "undefined") {
-                showAlert("fail", "Unknown server-side error occured. :-(");
+// To be reduced to knockout bindings soon(TM)!
+function featureToggleDisplay(element) {
+    var id = element.split("_")[1];
+    var visible = $(element).is(":visible");
+    $(".featureExpandable").hide();
+    $(".featureExandableButton").removeClass("fa-caret-down");
+    $(".featureExandableButton").addClass("fa-caret-right");
+    if (!visible) {
+        $("#featureExandableButton_" + id).removeClass("fa-caret-right");
+        $("#featureExandableButton_" + id).addClass("fa-caret-down");
+        // Get all data.
+        var displayElement = $("#featureNoteDisplay_" + id);
+        var firstHTML = '<div class="card"><div class="card-block"><p class="card-text m-0"><strong>';
+        var secHTML = ': </strong>';
+        var thirdHTML = '</p><p class="card-text"><small class="text-muted">';
+        var lastHTML = '</small></p></div>';
+        displayElement.html("");
+        $.get("feature/" + id, {}, function (data) {
+            if (data.hasOwnProperty('message')) {
+                // Convert to a better error display...
+                console.log("Sorry, you do not have permission to access this!");
             } else {
-                showAlert("fail", "Error: " + response.responseJSON.message);
+                // We've got the feature data, lets display it. :-)
+                var created = new moment(data['feature']['created']).format("MMM D, YYYY [at] H:m A"); 
+                var target = new moment(data['feature']['target_date']).format("MMM D, YYYY"); 
+                if (target === "Invalid date") {
+                    target = "";
+                }
+                var extraHTML = '<p class="card-text m-0"><strong>';
+                var newHTML = firstHTML + "Description" + secHTML + data['feature']['description'] + '</p>' + extraHTML + 'Target Date' +
+                    secHTML + target + '</p>' + extraHTML + 'Ticket URL' + secHTML + '<a href="' + data['feature']['ticket_url'] + '">' +
+                    data['feature']['ticket_url'] + thirdHTML + created + lastHTML;
+                displayElement.append(newHTML);
+                $.get("featurenote/" + id, {}, function (data) {
+                    if (data.hasOwnProperty('message')) {
+                        // Convert to a better error display...
+                        console.log("Sorry, you do not have permission to access this!");
+                    } else {
+                        data = data["feature_notes"];
+                        for (var i in data) {
+                            var created = new moment(data[i]['created']).format("MMM D, YYYY [at] H:m A"); 
+                            var newHTML = firstHTML + data[i]['user'] + secHTML + data[i]['note'] + thirdHTML + created + lastHTML;
+                            displayElement.append(newHTML);
+                        }
+                    }
+                    displayElement.append('<div class="card" id="featureAddResponseDIV_' + id + '"><div class="card-block"><form id="featureAddResponse_' + id + '"><input type="hidden" name="feature_id" value="' + id + '"><div class="form-group"><label for="featureAddResponseText_' + id + '">Add Response:</label><textarea class="form-control" name="note" id="featureAddResponseText_' + id + '" rows="3"></textarea></div><button id="featureAddResponseButton_' + id + '" type="button" class="btn btn-primary">Submit</button></div></div>');
+                    $("#featureAddResponseButton_" + id).on('click', function () {
+                        var json_data = $("#featureAddResponse_" + id).serializeJSON();
+                        var sendData = $.ajax({
+                            url: "featurenote",
+                            method: "POST",
+                            data: json_data,
+                            contentType: "application/json; charset=utf-8",
+                            dataType: "json"
+                        });
+                        sendData.done(function (msg) {
+                            data = msg['feature_note'];
+                            var created = new moment(data['created']).format("MMM D, YYYY [at] H:m A");
+                            var newHTML = firstHTML + data['user'] + secHTML + data['note'] + thirdHTML + created + lastHTML;
+                            $(newHTML).insertBefore("#featureAddResponseDIV_" + id);
+                        });
+                    });
+                    $(element).show();
+                });
             }
         });
+        
     }
 }
-
-// Sends a DELETE to the server with the id of the item to be deleted.
-//     data_type: 'feature', 'client', 'product', or 'user'
-//     show_value: Value from the response that is displayed in the success message.
-function deleteDataForm(data_type, show_value) {
-    var type_upper = data_type.charAt(0).toUpperCase() + data_type.slice(1);
-    var sendData = $.ajax({
-        url: data_type + '/' + $("#delete" + type_upper + "ID").val(),
-        method: "DELETE",
-        dataType: "json"
-    });
-    $("#delete" + type_upper + "Modal").modal('hide');
-    sendData.done(function (msg) {
-        if (data_type === "client" || data_type === "feature") {
-            showAlert("success", "Deleted " + msg[data_type][show_value] + ".");
-        } else {
-            showAlert("success", "Deactivated " + msg[data_type][show_value] + ".");
-        }
-        featureRequestViewModel.updateData(data_type);
-        if (data_type === "client") {
-            featureRequestViewModel.updateData("feature");
-        }
-    });
-    sendData.fail(function (response, textStatus) {
-        if (response === "undefined") {
-            showAlert("fail", "Unknown server-side error occured. :-(");
-        } else {
-            showAlert("fail", "Error: " + response.responseJSON.message);
-        }
-    });
-}
-
-// Bug workaround
-// http://stackoverflow.com/questions/30113228/why-does-bootstrap-datepicker-trigger-show-bs-modal-when-it-is-displayed
-$("#editFeatureModal .datepicker").on("show", function (e) {
-    e.preventDefault();
-    e.stopPropagation();
-}).on("hide", function (e) {
-    e.preventDefault();
-    e.stopPropagation();
-});
-
-// Bug workaround
-// http://stackoverflow.com/questions/30113228/why-does-bootstrap-datepicker-trigger-show-bs-modal-when-it-is-displayed
-$("#addFeatureModal .datepicker").on("show", function (e) {
-    e.preventDefault();
-    e.stopPropagation();
-}).on("hide", function (e) {
-    e.preventDefault();
-    e.stopPropagation();
-});
-$("#editFeatureModal").on("show.bs.modal", function (event) {
-    console.log(event);
-    var button = $(event.relatedTarget)
-    var id = button.data("id")
-    var modal = $(this)
-    console.log(id);
-    // Thanks guys!
-    // http://stackoverflow.com/questions/7364150/find-object-by-id-in-an-array-of-javascript-objects
-    var result = $.grep(featureRequestViewModel.featureData(), function (e) { return e.id == id; });
-    if (result.length != 1) {
-        // Need to put an error message here.
-    }
-    data = result[0];
-    console.log(data);
-    modal.find('.modal-title').text('Edit Feature: ' + data.title);
-    modal.find('#editFeatureID').val(data.id);
-    modal.find('#editFeatureTitle').val(data.title);
-    modal.find('#editFeatureDescription').val(data.description);
-    modal.find('#editFeatureClient option').text(data.client);
-    modal.find('#editFeatureClient option').val(data.client_id);
-    modal.find('#editFeaturePriority').val(data.priority);
-    if (data.target_date != "" && data.target_date != null) {
-        // setUTCDate was used here to prevent it from trying to change the date based on local timezone.
-        modal.find('.datepicker').datepicker('setUTCDate', new Date(data.target_date));
-    } else {
-        modal.find('.datepicker').datepicker('update', '');
-    }
-    modal.find('#editFeatureURL').val(data.url);
-    modal.find('#editFeatureProduct').val(data.product_id);
-});
-
-
-$("#editFeatureModal").on("hide.bs.modal", function (event) {
-    $(this).find('.datepicker').datepicker('update', '');
-});
-
-$("#addFeatureModal").on("hide.bs.modal", function (event) {
-    $(this).find('.datepicker').datepicker('update', '');
-});
-
-$("#editClientModal").on("show.bs.modal", function (event) {
-    var button = $(event.relatedTarget)
-    var id = button.data("id")
-    var modal = $(this)
-    // Thanks guys!
-    // http://stackoverflow.com/questions/7364150/find-object-by-id-in-an-array-of-javascript-objects
-    var result = $.grep(featureRequestViewModel.clientData(), function (e) { return e.id == id; });
-    if (result.length != 1) {
-        // Need to put an error message here.
-    }
-    data = result[0];
-    modal.find('.modal-title').text('Edit Client: ' + data.name);
-    modal.find('#editClientID').val(data.id);
-    modal.find('#editClientName').val(data.name);
-    modal.find('#editClientPOC').val(data.poc);
-    modal.find('#editClientEmail').val(data.email);
-    modal.find('#editClientPhone').val(data.phone);
-});
-
-$("#editProductModal").on("show.bs.modal", function (event) {
-    var button = $(event.relatedTarget)
-    var id = button.data("id")
-    var modal = $(this)
-    // Thanks guys!
-    // http://stackoverflow.com/questions/7364150/find-object-by-id-in-an-array-of-javascript-objects
-    var result = $.grep(featureRequestViewModel.productData(), function (e) { return e.id == id; });
-    if (result.length != 1) {
-        // Need to put an error message here.
-    }
-    data = result[0];
-    modal.find('.modal-title').text('Edit Product: ' + data.name);
-    modal.find('#editProductID').val(data.id);
-    modal.find('#editProductName').val(data.name);
-    modal.find('#editProductDescription').val(data.description);
-    if (data.active === "Yes") {
-        modal.find('#editProductActive').val("1");
-    } else {
-        modal.find('#editProductActive').val("");
-    }
-});
-
-$("#editUserModal").on("show.bs.modal", function (event) {
-    var button = $(event.relatedTarget)
-    var id = button.data("id")
-    var modal = $(this)
-    // Thanks guys!
-    // http://stackoverflow.com/questions/7364150/find-object-by-id-in-an-array-of-javascript-objects
-    var result = $.grep(featureRequestViewModel.userData(), function (e) { return e.id == id; });
-    if (result.length != 1) {
-        // Need to put an error message here.
-    }
-    data = result[0];
-    modal.find('.modal-title').text('Edit User: ' + data.username);
-    modal.find('#editUserID').val(data.id);
-    modal.find('#editUserName').val(data.username);
-    modal.find('#editUserRole').val(data.role);
-});
-
-$("#deleteFeatureModal").on("show.bs.modal", function (event) {
-    var button = $(event.relatedTarget)
-    var id = button.data("id")
-    var modal = $(this)
-    // Thanks guys!
-    // http://stackoverflow.com/questions/7364150/find-object-by-id-in-an-array-of-javascript-objects
-    var result = $.grep(featureRequestViewModel.featureData(), function (e) { return e.id == id; });
-    if (result.length != 1) {
-        // Need to put an error message here.
-        console.log("ooops");
-    }
-    data = result[0];
-    modal.find('.modal-title').text('Delete Feature: ' + data.title);
-    modal.find('#deleteFeatureText').text("Are you sure you want to delete " + data.title + "?");
-    modal.find('#deleteFeatureID').val(id);
-});
-
-$("#deleteClientModal").on("show.bs.modal", function (event) {
-    var button = $(event.relatedTarget)
-    var id = button.data("id")
-    var modal = $(this)
-    // Thanks guys!
-    // http://stackoverflow.com/questions/7364150/find-object-by-id-in-an-array-of-javascript-objects
-    var result = $.grep(featureRequestViewModel.clientData(), function (e) { return e.id == id; });
-    if (result.length != 1) {
-        // Need to put an error message here.
-        console.log("ooops");
-    }
-    data = result[0];
-    modal.find('.modal-title').text('Delete Client: ' + data.name);
-    modal.find('#deleteClientText').text("Are you sure you want to delete " + data.name + " and all data associated with that client?");
-    modal.find('#deleteClientID').val(id);
-});
-
-$("#deleteProductModal").on("show.bs.modal", function (event) {
-    var button = $(event.relatedTarget)
-    var id = button.data("id")
-    var modal = $(this)
-    // Thanks guys!
-    // http://stackoverflow.com/questions/7364150/find-object-by-id-in-an-array-of-javascript-objects
-    var result = $.grep(featureRequestViewModel.productData(), function (e) { return e.id == id; });
-    if (result.length != 1) {
-        // Need to put an error message here.
-        console.log("ooops");
-    }
-    data = result[0];
-    modal.find('.modal-title').text('Deactivate Product Area: ' + data.name);
-    modal.find('#deleteProductText').text("Are you sure you want to deactivate the product area " + data.name + "? Current features with this product area will not be changed.");
-    modal.find('#deleteProductID').val(id);
-});
-
-$("#deleteUserModal").on("show.bs.modal", function (event) {
-    var button = $(event.relatedTarget)
-    var id = button.data("id")
-    var modal = $(this)
-    // Thanks guys!
-    // http://stackoverflow.com/questions/7364150/find-object-by-id-in-an-array-of-javascript-objects
-    var result = $.grep(featureRequestViewModel.userData(), function (e) { return e.id == id; });
-    if (result.length != 1) {
-        // Need to put an error message here.
-        console.log("ooops");
-    }
-    data = result[0];
-    modal.find('.modal-title').text('Deactivate User: ' + data.username);
-    modal.find('#deleteUserText').text("Are you sure you want to deactivate " + data.username + "?");
-    modal.find('#deleteUserID').val(id);
-});

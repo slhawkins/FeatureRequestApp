@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/css/bootstrap-multiselect.css" integrity="sha256-O1jJhOIWWDc3wq75g7aXDl7aEQT2XPkieX/Mz/u4hQ0=" crossorigin="anonymous" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.0-RC3/css/bootstrap-datepicker3.min.css" integrity="sha256-x2QakhDNywgLRp4bMOcFtWJDh5aME39fbNVJTWBVbss=" crossorigin="anonymous" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/css/bootstrap-multiselect.css" integrity="sha256-O1jJhOIWWDc3wq75g7aXDl7aEQT2XPkieX/Mz/u4hQ0=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/9.8.0/css/bootstrap-slider.min.css" integrity="sha256-SimsGsu3ragCO+uhwd4Um5PUzUuc3Eg+pxshtVHXYpM=" crossorigin="anonymous" />
     <link href="static/css/featurerequest.css" rel="stylesheet">
 </head>
 <body>
@@ -16,10 +17,10 @@
         <div id="successAlert" class="alert alert-success" role="alert" style="display: none;">Success!</div>
         <div id="failAlert" class="alert alert-danger" role="alert" style="display: none;">Danger!</div>
     </div>
-    <div class="container-responsive">
+    <div class="container">
         <div class="row">
-            <div class="col-xl-1"></div>
-            <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-10">
+            <div class=""></div>
+            <div class="">
                 <div role="tabpanel" class="card">
                     <div class="card-header">
                         <ul class="nav nav-tabs card-header-tabs" role="tablist">
@@ -46,7 +47,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-xl-1"></div>
+            <div class=""></div>
         </div>
     </div>
     {% include "modals/feature.html" %}
@@ -62,10 +63,13 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout.mapping/2.4.1/knockout.mapping.min.js" integrity="sha256-gaGobNk1cPaj0abcVmyZxUYgCPsueCJwN5i4DjC4BS0=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.min.js" integrity="sha256-1fK87Pt9T7XXn/Vj3CWSfJlZkL5f73092A8YL7p7avc=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.0-RC3/js/bootstrap-datepicker.min.js" integrity="sha256-cxy6ZG28yUYUJuVa4jSB0REugsTXuiaAVAVamfh5wmk=" crossorigin="anonymous"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js" integrity="sha256-1hjUhpc44NwiNg8OwMu2QzJXhD8kcj+sJA3aCQZoUjg=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout-dragdrop/2.5.1/knockout.dragdrop.min.js" integrity="sha256-Im6ezERV33I6KTJBVPc5jCkVZYgyvtYtxsoY8gJapNY=" crossorigin="anonymous"></script>
+    <script src="static/js/bootstrap-slider.custom.min.js"></script>
     <script src="static/js/knockout.bindings.orderable.js"></script>
     <script src="static/js/jquery.serialize-object.js"></script>
     <script src="static/js/defaults.js"></script>
+    <script src="static/js/modals.js"></script>
     <script src="static/js/featurerequest.js"></script>
     <script src="static/js/mvvm.js"></script>
 </body>

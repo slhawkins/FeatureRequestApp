@@ -25,10 +25,8 @@ var featureColumnsOrder = [
     'client',
     'product_area',
     'title',
-    'description',
     'priority',
-    'target_date',
-    'ticket_url'
+    'target_date'
 ];
 
 var clientColumnsMap = {

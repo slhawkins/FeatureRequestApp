@@ -322,6 +322,9 @@ class FeatureTodoAPI(Resource):
 
 
 class FeatureNoteAPI(Resource):
+    # Not 100% on doing this and how it complies with the standards.
+    # If someone is giving me an ID, they are 99.9% of the time looking for all notes pertaining to a feature.
+    # And on second though, no one really needs to query _all_ of the notes anyways.
     @roles('Employee', 'Administrator')
     def get(self, id=None):
         if id is None:
@@ -329,9 +332,9 @@ class FeatureNoteAPI(Resource):
             results = FeatureNoteSchema(many=True).dump(feature_notes)
             return make_response(jsonify({'feature_notes': results.data}), 200)
         else:
-            feature_note = FeatureNote.query.get(id)
-            result = FeatureNoteSchema().dump(feature_note)
-            return make_response(jsonify({'feature_note': result.data}), 200)
+            feature_note = FeatureNote.query.filter(FeatureNote.feature_id==id).all()
+            result = FeatureNoteSchema(many=True).dump(feature_note)
+            return make_response(jsonify({'feature_notes': result.data}), 200)
 
     @roles('Employee', 'Administrator')
     def post(self):
