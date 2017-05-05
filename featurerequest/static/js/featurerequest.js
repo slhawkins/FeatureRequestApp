@@ -63,6 +63,7 @@ function featureToggleDisplay(element) {
                             dataType: "json"
                         });
                         sendData.done(function (msg) {
+                            $("#featureAddResponseText_" + id).val('');
                             data = msg['feature_note'];
                             var created = new moment(data['created']).format("MMM D, YYYY [at] H:m A");
                             var newHTML = firstHTML + data['user'] + secHTML + data['note'] + thirdHTML + created + lastHTML;

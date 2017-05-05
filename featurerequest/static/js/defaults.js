@@ -35,7 +35,7 @@ var clientColumnsMap = {
     'id': 'ID',
     'name': 'Name',
     'phone': 'Phone',
-    'poc': 'Poc',
+    'poc': 'Point of Contact',
     'user': 'User',
     'user_id': 'User ID'
 };
