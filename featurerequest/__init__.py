@@ -1,5 +1,6 @@
-# Initial starting point was taken from:
-#    http://flask-dance.readthedocs.io/en/latest/quickstarts/github.html
+""" Initial starting point was taken from:
+       http://flask-dance.readthedocs.io/en/latest/quickstarts/github.html
+"""
 
 import sys
 from flask import Flask

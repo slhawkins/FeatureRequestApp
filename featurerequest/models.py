@@ -1,13 +1,10 @@
-"""Provides all of the required models for the application. This includes:
-   - User
+"""Provides all of the required models and schemas for the application. This includes:
+   - User/UserSchema
    - OAuth
-   - Client
-   - ProductArea
-   - Feature
-   - FeatureTodo
-   - FeatureNote
-
-   Marshmallow schema's are also created to make RESTful API life easy.
+   - Client/ClientSchema
+   - Product/ProductSchema
+   - Feature/FeatureSchema
+   - FeatureComment/FeatureCommentSchema
 """
 
 from datetime import datetime
@@ -18,26 +15,28 @@ from marshmallow import fields
 
 
 class User(db.Model, UserMixin):
-    """User table, currently only holds the username and role."""
-    id = db.Column(db.Integer, primary_key=True)
+    """User table, holds the username and role."""
+    id = db.Column(db.Integer, primary_key=True) # pylint: disable=invalid-name
     username = db.Column(db.String(250), unique=True, nullable=False)
-    active = db.Column(db.Boolean, default=True)
     role = db.Column(db.Enum('Inactive', 'Employee', 'Administrator'))
 
+
 class UserSchema(ma.ModelSchema):
-    class Meta:
+    """Provides serialization and deserialization methods for the User model."""
+    class Meta: # pylint: disable=too-few-public-methods
+        """Populates the schema with properties from the SQL-Alchemy model."""
         model = User
 
 
-class OAuth(OAuthConsumerMixin, db.Model):
+class OAuth(OAuthConsumerMixin, db.Model): # pylint: disable=too-few-public-methods
     """OAuth table, used internally by Flask-Dance for storing OAuth tokens."""
     user_id = db.Column(db.Integer, db.ForeignKey(User.id))
     user = db.relationship(User)
 
 
-class Client(db.Model):
+class Client(db.Model): # pylint: disable=too-few-public-methods
     """Client table, allows clients to be added/updated/removed."""
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True) # pylint: disable=invalid-name
     user_id = db.Column(db.Integer, db.ForeignKey(User.id))
     created = db.Column(db.DateTime, default=lambda: str(datetime.now()))
     name = db.Column(db.String(250))
@@ -45,27 +44,21 @@ class Client(db.Model):
     email = db.Column(db.String(250))
     phone = db.Column(db.String(15))
     user = db.relationship(User)
-    """
-    def __init__(self, name, email, phone, user_id=None):
-        self.name = name
-        self.email = email
-        self.phone = phone
-        self.user_id = user_id
-    """
-    def __repr__(self):
-        return '<Client {}>'.format(self.name)
+
 
 class ClientSchema(ma.ModelSchema):
+    """Provides serialization and deserialization methods for the Client model."""
     user = fields.Nested(UserSchema, only='username')
-    class Meta:
+    class Meta: # pylint: disable=too-few-public-methods
+        """Populates the schema with properties from the SQL-Alchemy model."""
         model = Client
         include_fk = True
 
 
-class Product(db.Model):
+class Product(db.Model): # pylint: disable=too-few-public-methods
     """Product area's table, allows for additional product areas to be added
     aside from the default Policies, Billing, Claims, and Reports."""
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True) # pylint: disable=invalid-name
     user_id = db.Column(db.Integer, db.ForeignKey(User.id))
     created = db.Column(db.DateTime, default=lambda: str(datetime.now()))
     name = db.Column(db.String(50))
@@ -73,16 +66,19 @@ class Product(db.Model):
     description = db.Column(db.String(500))
     user = db.relationship(User)
 
+
 class ProductSchema(ma.ModelSchema):
+    """Provides serialization and deserialization methods for the Product model."""
     user = fields.Nested(UserSchema, only='username')
-    class Meta:
+    class Meta: # pylint: disable=too-few-public-methods
+        """Populates the schema with properties from the SQL-Alchemy model."""
         model = Product
         include_fk = True
 
 
-class Feature(db.Model):
+class Feature(db.Model): # pylint: disable=too-few-public-methods
     """Feature table, stores each individual feature request."""
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True) # pylint: disable=invalid-name
     user_id = db.Column(db.Integer, db.ForeignKey(User.id))
     client_id = db.Column(db.Integer, db.ForeignKey(Client.id))
     product_id = db.Column(db.Integer, db.ForeignKey(Product.id))
@@ -92,53 +88,37 @@ class Feature(db.Model):
     priority = db.Column(db.SmallInteger)
     target_date = db.Column(db.Date)
     ticket_url = db.Column(db.String(2000))
-    is_active = db.Column(db.Boolean, default=True)
     user = db.relationship(User)
     client = db.relationship(Client)
     product_area = db.relationship(Product)
 
+
 class FeatureSchema(ma.ModelSchema):
+    """Provides serialization and deserialization methods for the Feature model."""
     user = fields.Nested(UserSchema, only='username')
     client = fields.Nested(ClientSchema, only='name')
     product_area = fields.Nested(ProductSchema, only='name')
-    class Meta:
+    class Meta: # pylint: disable=too-few-public-methods
+        """Populates the schema with properties from the SQL-Alchemy model."""
         model = Feature
         include_fk = True
 
 
-class FeatureTodo(db.Model):
-    """Feature to-do table, to-do's can be added to a feature."""
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey(User.id))
-    feature_id = db.Column(db.Integer, db.ForeignKey(Feature.id))
-    created = db.Column(db.DateTime, default=lambda: str(datetime.now()))
-    priority = db.Column(db.SmallInteger)
-    todo = db.Column(db.String(250))
-    completed = db.Column(db.Boolean, default=False)
-    user = db.relationship(User)
-    feature = db.relationship(Feature, cascade='delete')
-
-class FeatureTodoSchema(ma.ModelSchema):
-    user = fields.Nested(UserSchema, only='username')
-    #feature = fields.Nested(FeatureSchema) # Probably don't need
-    class Meta:
-        model = FeatureTodo
-        include_fk = True
-
-class FeatureNote(db.Model):
+class FeatureComment(db.Model): # pylint: disable=too-few-public-methods
     """Feature note table, allows for thread-like discussion about a feature."""
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True) # pylint: disable=invalid-name
     user_id = db.Column(db.Integer, db.ForeignKey(User.id))
     feature_id = db.Column(db.Integer, db.ForeignKey(Feature.id))
     created = db.Column(db.DateTime, default=lambda: str(datetime.now()))
     note = db.Column(db.String(500))
     user = db.relationship(User)
     feature = db.relationship(Feature, cascade='delete')
-    
 
-class FeatureNoteSchema(ma.ModelSchema):
+
+class FeatureCommentSchema(ma.ModelSchema):
+    """Provides serialization and deserialization methods for the FeatureComment model."""
     user = fields.Nested(UserSchema, only='username')
-    #feature = fields.Nested(FeatureSchema) # Probably don't need
-    class Meta:
-        model = FeatureNote
+    class Meta: # pylint: disable=too-few-public-methods
+        """Populates the schema with properties from the SQL-Alchemy model."""
+        model = FeatureComment
         include_fk = True

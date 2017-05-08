@@ -2,7 +2,7 @@ function FeatureRequestViewModel() {
     var self = this;
     // Setup data observables. They have the following types:
     // _____Watch    : Watch variables are used to update the data table when
-    //                 either its column order or data has changed. 
+    //                 either its column order or data has changed.
     // _____Data     : Data retrieved from the API
     // _____Columns  : Column order, could be easily changed for the user.
     // _____ColumnMap: Contains a map from the field names retrieved via the API
@@ -43,7 +43,7 @@ function FeatureRequestViewModel() {
         //$('#addFeatureClient').multiselect('destroy');
         //$('#addFeatureClient').find('option').remove();
         // http://stackoverflow.com/questions/1129216/sort-array-of-objects-by-string-property-value-in-javascript
-        names = self.clientData()
+        names = self.clientData();
         names.sort(function (a, b) { return (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0); });
         return names;
     });
@@ -69,8 +69,8 @@ function FeatureRequestViewModel() {
 
     /* Client and Product Area multiselect functions and variables */
     self.defaultMultiselectOptions = {
-        buttonWidth: '100%',
-        buttonClass: 'btn btn-secondary',
+        buttonWidth: "100%",
+        buttonClass: "btn btn-secondary",
         nableFiltering: true,
         enableCaseInsensitiveFiltering: true,
         includeSelectAllOption: true,
@@ -81,49 +81,49 @@ function FeatureRequestViewModel() {
         },
         onDropdownHidden: function (event) {
             var selectElement = $(event.target).prev();
-            var selectID = selectElement.attr('id');
+            var selectID = selectElement.attr("id");
             var values = selectElement.val();
-            for (var idx in values) {
-                values[idx] = parseInt(values[idx]);
-            }
+            values.forEach(function (item, idx, arr) {
+                arr[idx] = parseInt(item);
+            });
             if (selectID.indexOf("Client") !== -1) {
                 featureRequestViewModel.updateFilter("client", values);
             } else {
                 featureRequestViewModel.updateFilter("product", values);
             }
         }
-    }
+    };
     self.updateClientMultiselect = function (option, item) {
         if (item.id === self.clientNamesOrdered()[self.clientNamesOrdered().length - 1].id) {
             var element = $("#featureClientFilter");
             // Delay added due to problems it to work properly. :-(
             setTimeout(function () {
-                element.multiselect('rebuild');
-                element.multiselect('selectAll', false);
-                element.multiselect('updateButtonText');
+                element.multiselect("rebuild");
+                element.multiselect("selectAll", false);
+                element.multiselect("updateButtonText");
                 // This is a manual trigger of the dropdown to update the filtered data.
                 $("#featureClientFilterContainer").trigger("hidden.bs.dropdown");
             }, 500);
         }
-    }
+    };
     self.updateProductMultiselect = function (option, item) {
         if (item.id === self.productNamesOrdered()[self.productNamesOrdered().length - 1].id) {
             var element = $("#featureProductFilter");
             // Delay added due to problems it to work properly. :-(
             setTimeout(function () {
                 console.log("Delayed");
-                element.multiselect('rebuild');
-                element.multiselect('selectAll', false);
-                element.multiselect('updateButtonText');
+                element.multiselect("rebuild");
+                element.multiselect("selectAll", false);
+                element.multiselect("updateButtonText");
                 // This is a manual trigger of the dropdown to update the filtered data.
                 $("#featureProductFilterContainer").trigger("hidden.bs.dropdown");
 
             }, 500);
         }
-    }
+    };
 
     // Had an issue with the slider not being callable, this is a workaround for now.
-    self.sliderInit = false
+    self.sliderInit = false;
     self.initSlider = function () {
         if (!self.sliderInit) {
             self.sliderInit = true;
@@ -142,7 +142,7 @@ function FeatureRequestViewModel() {
             });
             $("#sliderAmount").text("Priority Range: " + $("#slider-range").slider("values", 0) + " - " + $("#slider-range").slider("values", 1));
         }
-    }
+    };
 
 
     /* Sorting drag and drop - largely taken from the example. */
@@ -167,7 +167,7 @@ function FeatureRequestViewModel() {
             zoneData.items.splice(zoneDataIndex, 0, dragData);
         }
     };
-    self.toDraggables = function(values) {
+    self.toDraggables = function (values) {
         return ko.utils.arrayMap(values, function (value) {
             return {
                 self: self,
@@ -180,7 +180,7 @@ function FeatureRequestViewModel() {
                 }
             };
         });
-    }
+    };
     self.sortable = new SortableView(self.toDraggables(self.dragAndDropSortableIterms));
     self.sortable.subscribedItems.subscribe(function () {
         self.sortFeatureTable();
@@ -199,10 +199,10 @@ function FeatureRequestViewModel() {
             var data = self.featureData();
         }
         var mapper = {
-            'Client': 'client',
-            'Product Area': 'product_area',
-            'Priority': 'priority',
-            'Target Date': 'target_date'
+            "Client": "client",
+            "Product Area": "product_area",
+            "Priority": "priority",
+            "Target Date": "target_date"
         };
         var sortOrder = [];
         for (var idx in self.sortable.items()) {
@@ -307,15 +307,15 @@ function FeatureRequestViewModel() {
             // Check to see if we have data on this already.
             if (!("feature_" + id in self.featureDiscussionData())) {
                 // We don't, so lets fetch it.
-                $.get("featurenote/" + id, {}, function (data) {
-                    if (data.hasOwnProperty('message')) {
+                $.get("feature_comment/" + id, {}, function (data) {
+                    if (data.hasOwnProperty("message")) {
                         // Convert to a better error display...
                         console.log("Sorry, you do not have permission to access this!");
                     } else {
                         data = data["feature_notes"];
                         // Change the date format
                         for (var i in data) {
-                            data[i]['created'] = new moment(data[i]['created']).format("MMM D, YYYY [at] H:m A");
+                            data[i]['created'] = new moment(data[i]["created"]).format("MMM D, YYYY [at] H:m A");
                         }
                         var allData = self.featureDiscussionData();
                         allData["feature_" + id] = data;
@@ -329,10 +329,10 @@ function FeatureRequestViewModel() {
         }
     }
     self.featureDiscussionAddResponse = function (id) {
-        console.log('AddResponse: ' + id);
+        console.log("AddResponse: " + id);
         var json_data = $("#featureAddResponse_" + id).serializeJSON();
         var sendData = $.ajax({
-            url: "featurenote",
+            url: "feature_comment",
             method: "POST",
             data: json_data,
             contentType: "application/json; charset=utf-8",
@@ -351,16 +351,16 @@ function FeatureRequestViewModel() {
     /* Functions to get data from the API and pass it along*/
     self.getData = function(data_type) {
         $.get("/" + data_type, {}, function( data ) {
-            if (data.hasOwnProperty('message')) {
+            if (data.hasOwnProperty("message")) {
                 console.log("Sorry, you do not have permission to access this!");
                 self[data_type + "Data"]([]);
             } else {
                 if (data_type === "product") {
-                    for (var i in data['products']) {
-                        if (data['products'][i]['active'] == true) {
-                            data['products'][i]['active'] = "Yes";
+                    for (var i in data["products"]) {
+                        if (data["products"][i]["active"] == true) {
+                            data["products"][i]["active"] = "Yes";
                         } else {
-                            data['products'][i]['active'] = "No";
+                            data["products"][i]["active"] = "No";
                         }
                     }
                 }
@@ -383,18 +383,18 @@ function FeatureRequestViewModel() {
     }
     self.updateData = function (data) {
         if (typeof (data) === "undefined") {
-            self.getData('feature');
-            self.getData('client');
-            self.getData('product');
-            self.getData('user');
+            self.getData("feature");
+            self.getData("client");
+            self.getData("product");
+            self.getData("user");
         } else if (data == "feature") {
-            self.getData('feature');
+            self.getData("feature");
         } else if (data == "client") {
-            self.getData('client');
+            self.getData("client");
         } else if (data == "product") {
-            self.getData('product');
+            self.getData("product");
         } else if (data == "user") {
-            self.getData('user');
+            self.getData("user");
         } else {
             console.log("Check spell check!");
         }
@@ -407,8 +407,8 @@ ko.applyBindings(featureRequestViewModel);
 $(function () {
     /* Default options for the multiselects used for filtering. */
     var defaultMultiselectOptions = {
-        buttonWidth: '100%',
-        buttonClass: 'btn btn-secondary',
+        buttonWidth: "100%",
+        buttonClass: "btn btn-secondary",
         nableFiltering: true,
         enableCaseInsensitiveFiltering: true,
         includeSelectAllOption: true,
@@ -419,11 +419,11 @@ $(function () {
         },
         onDropdownHidden: function (event) {
             var selectElement = $(event.target).prev();
-            var selectID = selectElement.attr('id');
+            var selectID = selectElement.attr("id");
             var values = selectElement.val();
-            for (var idx in values) {
-                values[idx] = parseInt(values[idx]);
-            }
+            values.forEach(function (item, idx, arr) {
+                arr[idx] = parseInt(item);
+            });
             if (selectID.indexOf("Client") !== -1) {
                 featureRequestViewModel.updateFilter("client", values);
             } else {
@@ -431,37 +431,21 @@ $(function () {
             }
         }
     }
-    $('#featureClientFilter').multiselect($.extend({}, defaultMultiselectOptions, {
-        nonSelectedText: 'No Clients',
-        allSelectedText: 'All Clients',
+    $("#featureClientFilter").multiselect($.extend({}, defaultMultiselectOptions, {
+        nonSelectedText: "No Clients",
+        allSelectedText: "All Clients",
         buttonContainer: '<div class="btn-group m-2" id="featureClientFilterContainer" />',
     }));
-    $('#featureProductFilter').multiselect($.extend({}, defaultMultiselectOptions, {
-        nonSelectedText: 'No Products',
-        allSelectedText: 'All Products',
+    $("#featureProductFilter").multiselect($.extend({}, defaultMultiselectOptions, {
+        nonSelectedText: "No Products",
+        allSelectedText: "All Products",
         buttonContainer: '<div class="btn-group m-2" id="featureProductFilterContainer" />',
     }));
 
     $('[data-toggle="tooltip"]').tooltip({
-        trigger: 'hover',
+        trigger: "hover",
         template: '<div class="tooltip" role="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>'
     });
-    /*
-    $("#slider-range").slider({
-        range: true,
-        min: 1,
-        max: 10,
-        values: [1, 10],
-        slide: function (event, ui) {
-            $("#sliderAmount").text("Priority Range: " + ui.values[0] + " - " + ui.values[1]);
-        },
-        stop: function (event, ui) {
-            console.log(ui.values);
-            featureRequestViewModel.updateFilter("priority", ui.values);
-        }
-    });*/
-    //$("#sliderAmount").text("Priority Range: " + $("#slider-range").slider("values", 0) + " - " + $("#slider-range").slider("values", 1));
-    
     featureRequestViewModel.updateData();
     featureRequestViewModel.initSlider();
 });
