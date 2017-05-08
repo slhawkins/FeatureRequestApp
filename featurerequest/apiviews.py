@@ -14,6 +14,7 @@ from flask_restful import Api, Resource
 from flask_login import current_user, login_user
 from sqlalchemy.orm import contains_eager
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy import func
 from marshmallow.exceptions import ValidationError
 
 api = Api(app)
@@ -246,14 +247,22 @@ class FeatureAPI(Resource):
             json_data['target_date'] = str(datetime.strptime(json_data['target_date'], "%m/%d/%Y").strftime("%Y-%m-%d"))
         else:
             del json_data['target_date']
-        # Update the priority when needed.
-        results = Feature.query.filter(Feature.client_id == json_data['client_id']).filter(Feature.priority >= json_data['priority']).all()
-        for row in results:
-            row.priority += 1
-        db.session.commit()
         data, errors = schema.load(json_data)
         if errors:
             return make_response(jsonify(errors), 422)
+        # Update the priority when needed.
+        results = Feature.query.filter(Feature.client_id == json_data['client_id']).filter(Feature.priority >= json_data['priority']).all()
+        if len(results) != 0:
+            for row in results:
+                row.priority += 1
+            db.session.commit()
+        else:
+            results = db.session.query(func.max(Feature.priority)).filter(Feature.client_id == json_data['client_id']).all()
+            max_priority = results[0][0]
+            if max_priority is None:
+                data.priority = 1
+            else:
+                data.priority = max_priority + 1
         data.user_id = current_user.id
         db.session.add(data)
         db.session.commit()
@@ -271,6 +280,29 @@ class FeatureAPI(Resource):
         if not json_data:
             return make_response(jsonify({'message': 'No data provided'}), 400)
         data = Feature.query.get_or_404(json_data['id'])
+        priority = int(json_data['priority'])
+        if priority != data.priority:
+            print("Entering")
+            # Changing the priority... Lets move everything down if needed.
+            results = Feature.query.filter(Feature.client_id == json_data['client_id']).filter(Feature.priority > data.priority).all()
+            for row in results:
+                row.priority -= 1
+            db.session.commit()
+            # Now move everything forward for the new priority...
+            results = Feature.query.filter(Feature.client_id == json_data['client_id']).filter(Feature.priority >= priority).all()
+            if len(results) != 0:
+                for row in results:
+                    row.priority += 1
+                db.session.commit()
+            results = db.session.query(func.max(Feature.priority)).filter(Feature.client_id == int(json_data['client_id'])).all()
+            print(results)
+            max_priority = results[0][0]
+            if max_priority is None:
+                json_data['priority'] = 1
+            else:
+                if priority > max_priority:
+                    json_data['priority'] = max_priority + 1
+        del json_data['client_id']
         try:
             for key, value in json_data.items():
                 schema.validate({key:value})
@@ -286,6 +318,12 @@ class FeatureAPI(Resource):
     def delete(self, id):
         data = Feature.query.get_or_404(id)
         title = data.title
+        priority = data.priority
+        client_id = data.client_id
+        results = Feature.query.filter(Feature.client_id == client_id).filter(Feature.priority > priority).all()
+        for row in results:
+            row.priority -= 1
+        db.session.commit()
         db.session.query(FeatureNote).filter_by(feature_id=id).delete()
         db.session.query(FeatureTodo).filter_by(feature_id=id).delete()
         db.session.query(Feature).filter_by(id=id).delete()

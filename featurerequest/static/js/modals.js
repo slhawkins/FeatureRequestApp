@@ -163,6 +163,7 @@ $("#editFeatureModal").on("show.bs.modal", function (event) {
     modal.find('#editFeatureDescription').val(data.description);
     modal.find('#editFeatureClient option').text(data.client);
     modal.find('#editFeatureClient option').val(data.client_id);
+    modal.find("#editFeatureClientHidden").val(data.client_id);
     modal.find('#editFeaturePriority').val(data.priority);
     if (data.target_date != "" && data.target_date != null) {
         // setUTCDate was used here to prevent it from trying to change the date based on local timezone.
