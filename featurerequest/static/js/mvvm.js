@@ -14,6 +14,7 @@ function FeatureRequestViewModel() {
     self.featureColumns = ko.observable(featureColumnsOrder);
     self.featureColumnMap = featureColumnsMap;
     self.featureColumns.subscribe(function () { self.featureWatch(1 + self.featureWatch()); });
+    self.featureDiscussionData = ko.observable({});
     self.featurePriorityMin = ko.observable(1);
     self.featurePriorityMax = ko.observable(10);
     self.featurePriorityMin.subscribe(function () {
@@ -293,8 +294,59 @@ function FeatureRequestViewModel() {
             self.featureData(data);
         }
     }
-    
 
+    self.featureToggleDisplay = function (featureDataIdx) {
+        var id = self.featureData()[featureDataIdx]["id"];
+        var element = $("#showFeature_" + id);
+        var visible = element.is(":visible");
+        if (visible) {
+            $(".featureExandableButton").removeClass("fa-caret-down");
+            $(".featureExandableButton").addClass("fa-caret-right");
+            $(".featureExpandable").hide();
+        } else {
+            // Check to see if we have data on this already.
+            if (!("feature_" + id in self.featureDiscussionData())) {
+                // We don't, so lets fetch it.
+                $.get("featurenote/" + id, {}, function (data) {
+                    if (data.hasOwnProperty('message')) {
+                        // Convert to a better error display...
+                        console.log("Sorry, you do not have permission to access this!");
+                    } else {
+                        data = data["feature_notes"];
+                        // Change the date format
+                        for (var i in data) {
+                            data[i]['created'] = new moment(data[i]['created']).format("MMM D, YYYY [at] H:m A");
+                        }
+                        var allData = self.featureDiscussionData();
+                        allData["feature_" + id] = data;
+                        self.featureDiscussionData(allData);
+                    }
+                });
+            }
+            $("#featureExandableButton_" + id).removeClass("fa-caret-right");
+            $("#featureExandableButton_" + id).addClass("fa-caret-down");
+            $("#showFeature_" + id).show();
+        }
+    }
+    self.featureDiscussionAddResponse = function (id) {
+        console.log('AddResponse: ' + id);
+        var json_data = $("#featureAddResponse_" + id).serializeJSON();
+        var sendData = $.ajax({
+            url: "featurenote",
+            method: "POST",
+            data: json_data,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json"
+        });
+        sendData.done(function (msg) {
+            $("#featureAddResponseText_" + id).val('');
+            data = msg["feature_note"];
+            data["created"] = new moment(data["created"]).format("MMM D, YYYY [at] H:m A");
+            var allData = self.featureDiscussionData();
+            allData["feature_" + id].push(data);
+            self.featureDiscussionData(allData);
+        });
+    }
 
     /* Functions to get data from the API and pass it along*/
     self.getData = function(data_type) {
@@ -313,16 +365,16 @@ function FeatureRequestViewModel() {
                     }
                 }
                 if (data_type === "feature") {
-                    self.filterFeatureTable(data["features"], true);
-                    // Get min/max priority values for the slider
                     var minValue = Number.MAX_SAFE_INTEGER;
                     var maxValue = 0;
                     for (var idx in data["features"]) {
-                        minValue = Math.min(data["features"][idx].priority, minValue);
-                        maxValue = Math.max(data["features"][idx].priority, maxValue);
+                        minValue = Math.min(data["features"][idx]["priority"], minValue);
+                        maxValue = Math.max(data["features"][idx]["priority"], maxValue);
+                        data["features"][idx]["created"] = new moment(data["features"][idx]["created"]).format("MMM D, YYYY [at] H:m A");
                     }
                     self.featurePriorityMin(minValue);
                     self.featurePriorityMax(maxValue);
+                    self.filterFeatureTable(data["features"], true);
                 } else {
                     self[data_type + "Data"](data[data_type + "s"]);
                 }
@@ -389,6 +441,11 @@ $(function () {
         allSelectedText: 'All Products',
         buttonContainer: '<div class="btn-group m-2" id="featureProductFilterContainer" />',
     }));
+
+    $('[data-toggle="tooltip"]').tooltip({
+        trigger: 'hover',
+        template: '<div class="tooltip" role="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>'
+    });
     /*
     $("#slider-range").slider({
         range: true,

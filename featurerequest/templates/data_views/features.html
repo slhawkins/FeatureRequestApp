@@ -14,7 +14,7 @@
                 <div class="ml-3 px-2 mb-3">
                     <div id="slider-range"></div>
                 </div>
-                <div class="card card-block bg-faded ml-3 p-2 mt-2">
+                <div class="card card-block bg-faded ml-3 p-2 mt-2" data-toggle="tooltip" data-placement="bottom" title="Drag to change sort order">
                     <h6 class="text-center">Sort Order</h6>
                     <div class="sortable" data-bind="with: sortable">
                         <div class="btn-group-vertical btn-block" data-bind="foreach: items">
@@ -59,13 +59,21 @@
                     <!-- ko if: (feature.enable) -->
                     <tr data-bind="foreach: $root.featureColumns">
                         <!-- ko if: ($index() == 0) -->
-                        <td data-bind="attr: {'onClick': 'featureToggleDisplay(&quot;#showFeature_' + feature['id'] + '&quot;);'}">
+                        <td data-bind="click: 
+                                            function(data, event) {
+                                                $root.featureToggleDisplay($parentContext.$index())
+                                            }">
                             <button type="button" class="btn btn-info btn-sm">
                                 <i class="fa fa-caret-right featureExandableButton" aria-hidden="true" data-bind="attr: {'id': 'featureExandableButton_' + feature['id']}"></i>
                             </button>
                         </td>
                         <!-- /ko -->
-                        <td data-bind="text: feature[$data], attr: {'onClick': 'featureToggleDisplay(&quot;#showFeature_' + feature['id'] + '&quot;);'}"></td>
+                        <td data-bind="
+                            text: feature[$data], 
+                            click: 
+                                function(data, event) {
+                                    $root.featureToggleDisplay($parentContext.$index())
+                            }"></td>
                         <!-- ko if: ($index() == $root.featureColumns().length - 1) -->
                         <td>
                             <div class="btn-group pull-right" role="group">
@@ -80,7 +88,55 @@
                         <!-- /ko -->
                     </tr>
                     <tr style="display: none;" class="featureExpandable" data-bind="attr: {'id': 'showFeature_' + feature['id']}">
-                        <td data-bind="attr: {'colspan': $root.featureColumns().length + 2, 'id': 'featureNoteDisplay_' + feature['id']}"></td>
+                        <td colspan="7">
+                            <div class="card">
+                                <div class="card-block">
+                                    <p class="card-text m-0">
+                                        <strong>Description: </strong>
+                                        <span data-bind="text: description"></span>
+                                    </p>
+                                    <p class="card-text m-0">
+                                        <strong>Target Date: </strong>
+                                        <span data-bind="text: created"></span>
+                                    </p>
+                                    <p class="card-text m-0">
+                                        <strong>Ticket URL: </strong>
+                                            <a data-bind="text: ticket_url, attr: {'a': ticket_url}"></a>
+                                    </p>
+                                    <p class="card-text">
+                                        <small class="text-muted" data-bind="text: created"></small>
+                                    </p>
+                                </div>
+                            </div>
+                            <!-- ko foreach: $root.featureDiscussionData()['feature_' + feature.id] -->
+                                <div class="card">
+                                    <div class="card-block">
+                                        <p class="card-text m-0">
+                                            <strong data-bind="text: user + ': '"></strong>
+                                            <span data-bind="text: note"></span>
+                                        </p>
+                                        <p class="card-text">
+                                            <small class="text-muted" data-bind="text: created"></small>
+                                        </p>
+                                    </div>
+                                </div>
+                            <!-- /ko -->
+                            <div class="card">
+                                <div class="card-block">
+                                    <form data-bind="attr: {'id': 'featureAddResponse_' + feature.id}">
+                                        <input type="hidden" name="feature_id" data-bind="attr: {'value': feature.id}">
+                                        <div class="form-group">
+                                            <label data-bind="attr: {'for': 'featureAddResponseText_' + feature.id}">Add Response:</label>
+                                            <textarea class="form-control" name="note" data-bind="attr: {'id': 'featureAddResponseText_' + feature.id}" rows="3"></textarea>
+                                        </div>
+                                        <button data-bind="click: 
+                                                function(data, event) {
+                                                    $root.featureDiscussionAddResponse(feature.id)
+                                                }"type="button" class="btn btn-primary">Submit</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </td>
                     </tr>
                     <!-- /ko -->
                 </tbody>
