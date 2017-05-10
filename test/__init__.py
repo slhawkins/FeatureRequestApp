@@ -1,8 +1,7 @@
 import os, unittest, requests
 from featurerequest import app, db
 from featurerequest import apiviews
-from featurerequest.models import User, Client, Product, Feature,\
-                                  FeatureTodo, FeatureNote
+from featurerequest.models import User, Client, Product, Feature, FeatureComment
 from flask import make_response, jsonify
 from flask_testing import TestCase
 from flask_login import current_user, login_user, logout_user
@@ -15,12 +14,12 @@ from sqlalchemy.orm.exc import NoResultFound
 # I could do to use different configuration classes for testing/dev/prod. It's 
 # very possible I can enable certain routes only for the testing environment.
 def login_test_user(username):
-    try:
-        logout_user()
-        login_user(User.query.filter_by(username=username).one())
-        return make_response(jsonify({'message':'Success!'}), 200)
-    except:
-        raise
+    logout_user()
+    if username != 'noone':
+        user = User.query.filter_by(username=username).one()
+        login_user(user)
+    return make_response(jsonify({'message':'Success!'}), 200)
+
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///temp.db'
 app.config['TESTING'] = True
 app.config['DEBUG'] = False
@@ -34,21 +33,27 @@ class MyTest(TestCase):
         self.db = db
         db.drop_all()
         db.create_all()
+        self.insert_users()
         self.load_dummy_data()
         self.client = self.app.test_client()
+        # Variables used in test methods
+        self.user_responses = {}
+        self.resource_url = ''
+        self.client.get('/login_test/admin')
 
     def tearDown(self):
         db.session.remove()
         #db.drop_all()
 
-    def load_dummy_data(self):
-        # Users
+    def insert_users(self):
         users = [
             User(username='admin', role='Administrator'),
             User(username='employee', role='Employee')
         ]
         for user in users:
             db.session.add(user)
+
+    def load_dummy_data(self):
         # Clients
         clients = [
             Client(name='Client A', poc='Steve', email='steve@clienta.com', phone='1234567890', user_id=1),
@@ -77,23 +82,25 @@ class MyTest(TestCase):
         ]
         for feature in features:
             db.session.add(feature)
-        # Feature To-dos
-        todos = [
-            FeatureTodo(user_id=1, feature_id=1, priority=1, todo='Beam me up, Scotty'),
-            FeatureTodo(user_id=1, feature_id=2, priority=1, todo='Beam me up, Scotty'),
-            FeatureTodo(user_id=1, feature_id=3, priority=1, todo='Beam me up, Scotty'),
-            FeatureTodo(user_id=1, feature_id=4, priority=1, todo='Beam me up, Scotty'),
-            FeatureTodo(user_id=1, feature_id=5, priority=1, todo='Beam me up, Scotty'),
-            FeatureTodo(user_id=1, feature_id=6, priority=1, todo='Beam me up, Scotty'),
-            FeatureTodo(user_id=1, feature_id=6, priority=2, todo='Now beam me back!'),
-        ]
-        for todo in todos:
-            db.session.add(todo)
         f_notes = [
-            FeatureNote(user_id=1, feature_id=1, note='We may have to upgrade the MySQL instance RAM for this.'),
-            FeatureNote(user_id=1, feature_id=2, note='We may have to upgrade the MySQL instance RAM for this.'),
-            FeatureNote(user_id=1, feature_id=6, note='We may have to upgrade the MySQL instance RAM for this.'),
+            FeatureComment(user_id=1, feature_id=1, note='We may have to upgrade the MySQL instance RAM for this.'),
+            FeatureComment(user_id=1, feature_id=2, note='We may have to upgrade the MySQL instance RAM for this.'),
+            FeatureComment(user_id=1, feature_id=6, note='We may have to upgrade the MySQL instance RAM for this.'),
         ]
         for note in f_notes:
             db.session.add(note)
         db.session.commit()
+
+    def permission_helper(self):
+        if not self.user_responses or not self.base_url:
+            raise ValueError('The variable user_responses is not set, please set it!')
+        for user in self.user_responses:
+            self.client.get('/login_test/' + user)
+            response = self.client.get(self.base_url)
+            assert response.status_code == self.user_responses[user]['get']
+            response = self.client.post(self.base_url)
+            assert response.status_code == self.user_responses[user]['post']
+            response = self.client.put(self.base_url)
+            assert response.status_code == self.user_responses[user]['put']
+            response = self.client.delete(self.base_url)
+            assert response.status_code == self.user_responses[user]['delete']

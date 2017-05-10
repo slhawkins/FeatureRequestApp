@@ -18,7 +18,7 @@ class User(db.Model, UserMixin):
     """User table, holds the username and role."""
     id = db.Column(db.Integer, primary_key=True) # pylint: disable=invalid-name
     username = db.Column(db.String(250), unique=True, nullable=False)
-    role = db.Column(db.Enum('Inactive', 'Employee', 'Administrator'))
+    role = db.Column(db.Enum('Inactive', 'Employee', 'Administrator'), nullable=False)
 
 
 class UserSchema(ma.ModelSchema):
@@ -38,8 +38,8 @@ class Client(db.Model): # pylint: disable=too-few-public-methods
     """Client table, allows clients to be added/updated/removed."""
     id = db.Column(db.Integer, primary_key=True) # pylint: disable=invalid-name
     user_id = db.Column(db.Integer, db.ForeignKey(User.id))
-    created = db.Column(db.DateTime, default=lambda: str(datetime.now()))
-    name = db.Column(db.String(250))
+    created = db.Column(db.DateTime, default=datetime.now)
+    name = db.Column(db.String(250), unique=True, nullable=False)
     poc = db.Column(db.String(250))
     email = db.Column(db.String(250))
     phone = db.Column(db.String(15))
@@ -60,7 +60,7 @@ class Product(db.Model): # pylint: disable=too-few-public-methods
     aside from the default Policies, Billing, Claims, and Reports."""
     id = db.Column(db.Integer, primary_key=True) # pylint: disable=invalid-name
     user_id = db.Column(db.Integer, db.ForeignKey(User.id))
-    created = db.Column(db.DateTime, default=lambda: str(datetime.now()))
+    created = db.Column(db.DateTime, default=datetime.now)
     name = db.Column(db.String(50))
     active = db.Column(db.Boolean, default=True)
     description = db.Column(db.String(500))
@@ -82,7 +82,7 @@ class Feature(db.Model): # pylint: disable=too-few-public-methods
     user_id = db.Column(db.Integer, db.ForeignKey(User.id))
     client_id = db.Column(db.Integer, db.ForeignKey(Client.id))
     product_id = db.Column(db.Integer, db.ForeignKey(Product.id))
-    created = db.Column(db.DateTime, default=lambda: str(datetime.now()))
+    created = db.Column(db.DateTime, default=datetime.now)
     title = db.Column(db.String(50))
     description = db.Column(db.String(500))
     priority = db.Column(db.SmallInteger)
@@ -109,7 +109,7 @@ class FeatureComment(db.Model): # pylint: disable=too-few-public-methods
     id = db.Column(db.Integer, primary_key=True) # pylint: disable=invalid-name
     user_id = db.Column(db.Integer, db.ForeignKey(User.id))
     feature_id = db.Column(db.Integer, db.ForeignKey(Feature.id))
-    created = db.Column(db.DateTime, default=lambda: str(datetime.now()))
+    created = db.Column(db.DateTime, default=datetime.now)
     note = db.Column(db.String(500))
     user = db.relationship(User)
     feature = db.relationship(Feature, cascade='delete')

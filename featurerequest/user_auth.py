@@ -82,10 +82,22 @@ def roles(*allowed_roles):
     """Roles decorator from http://flask.pocoo.org/snippets/98/"""
     def wrapper(f):
         @wraps(f)
-        def wrapped(*args, **kwargs):
+        def wrapped(self, *args, **kwargs):
             if get_user_role() not in allowed_roles:
                 return make_response(jsonify({'message':
                                               'You do not have access to this page.'}), 403)
-            return f(*args, **kwargs)
+            return f(self, *args, **kwargs)
+        return wrapped
+    return wrapper
+
+def roles_advanced(method):
+    """Roles decorator from http://flask.pocoo.org/snippets/98/"""
+    def wrapper(f):
+        @wraps(f)
+        def wrapped(self, *args, **kwargs):
+            if get_user_role() not in self.role_list[method]:
+                return make_response(jsonify({'message':
+                                              'You do not have access to this page.'}), 403)
+            return f(self, *args, **kwargs)
         return wrapped
     return wrapper
